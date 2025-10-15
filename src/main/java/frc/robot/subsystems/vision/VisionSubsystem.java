@@ -21,82 +21,82 @@ import org.littletonrobotics.junction.Logger;
  */
 public abstract class VisionSubsystem extends SubsystemBase {
 
-  private VisionData lastVisionData;
-  private boolean isDataFresh = false;
+    private VisionData lastVisionData;
+    private boolean isDataFresh = false;
 
-  @Override
-  public void periodic() {
-    var visionResult = getVisionResult();
-    if (visionResult.isPresent()) {
-      isDataFresh = true;
-      lastVisionData = visionResult.get();
-      logPoseEstimation(lastVisionData.pose);
-    } else {
-      isDataFresh = false;
+    @Override
+    public void periodic() {
+        var visionResult = getVisionResult();
+        if (visionResult.isPresent()) {
+            isDataFresh = true;
+            lastVisionData = visionResult.get();
+            logPoseEstimation(lastVisionData.pose);
+        } else {
+            isDataFresh = false;
+        }
     }
-  }
 
-  /** the data from vision combined in a convinient package */
-  public VisionData getLastVisionData() {
-    return lastVisionData;
-  }
+    /** the data from vision combined in a convinient package */
+    public VisionData getLastVisionData() {
+        return lastVisionData;
+    }
 
-  /** the vision pose */
-  public Pose2d getLastPose() {
-    return lastVisionData.pose;
-  }
+    /** the vision pose */
+    public Pose2d getLastPose() {
+        return lastVisionData.pose;
+    }
 
-  /**
-   * @return timestamp with the same epoch as the FPGA timestamp, in seconds
-   */
-  public double getLastTimestamp() {
-    return lastVisionData.timestamp;
-  }
+    /**
+     * @return timestamp with the same epoch as the FPGA timestamp, in seconds
+     */
+    public double getLastTimestamp() {
+        return lastVisionData.timestamp;
+    }
 
-  /**
-   * these are essentially the approximate error in the measurements for the given field position
-   *
-   * @return (x error meters, y error meters, heading error radians)
-   */
-  public Matrix<N3, N1> getLastDataStandardDeviations() {
-    return lastVisionData.standardDeviations;
-  }
+    /**
+     * these are essentially the approximate error in the measurements for the given field position
+     *
+     * @return (x error meters, y error meters, heading error radians)
+     */
+    public Matrix<N3, N1> getLastDataStandardDeviations() {
+        return lastVisionData.standardDeviations;
+    }
 
-  /**
-   * @return if the vision subsystem got new data from the hardware this loop
-   */
-  public boolean isDataFresh() {
-    return isDataFresh;
-  }
+    /**
+     * @return if the vision subsystem got new data from the hardware this loop
+     */
+    public boolean isDataFresh() {
+        return isDataFresh;
+    }
 
-  /**
-   * this is the function that gets the results from the hardware, the hardware may not have any
-   * results so return type is an optional
-   *
-   * <p>it is NOT safe to call this multiple times per loop, only call it once per periodic loop. if
-   * the vision system being used cannot get its position this will return an empty optional
-   */
-  protected abstract Optional<VisionData> getVisionResult();
+    /**
+     * this is the function that gets the results from the hardware, the hardware may not have any
+     * results so return type is an optional
+     *
+     * <p>it is NOT safe to call this multiple times per loop, only call it once per periodic loop. if
+     * the vision system being used cannot get its position this will return an empty optional
+     */
+    protected abstract Optional<VisionData> getVisionResult();
 
-  /** this would mainly be used for questnav, this does nothing if using photonvision */
-  public abstract Command resetPose(Pose2d newPose);
+    /** this would mainly be used for questnav, this does nothing if using photonvision */
+    public abstract Command resetPose(Pose2d newPose);
 
-  /**
-   * the quest has an internal gyroscope and this will reset it, does nothing if using photonvision
-   */
-  public abstract Command zeroHeading();
+    /**
+     * the quest has an internal gyroscope and this will reset it, does nothing if using photonvision
+     */
+    public abstract Command zeroHeading();
 
-  /**
-   * gets the name of the vision subsystem for logging, this lets us name each type of vision
-   * subsystem
-   */
-  public abstract String getName();
+    /**
+     * gets the name of the vision subsystem for logging, this lets us name each type of vision
+     * subsystem
+     */
+    public abstract String getName();
 
-  /** this logs the x, y, and heading of the vision individualy and as a Pose2d */
-  private void logPoseEstimation(Pose2d estimatedPose) {
-    Logger.recordOutput(getName() + "X Position", estimatedPose.getX());
-    Logger.recordOutput(getName() + "Y Position", estimatedPose.getY());
-    Logger.recordOutput(getName() + "Rotation", estimatedPose.getRotation().getRadians());
-    Logger.recordOutput(getName() + "Estimated Pose", estimatedPose);
-  }
+    /** this logs the x, y, and heading of the vision individualy and as a Pose2d */
+    private void logPoseEstimation(Pose2d estimatedPose) {
+        Logger.recordOutput(getName() + "X Position", estimatedPose.getX());
+        Logger.recordOutput(getName() + "Y Position", estimatedPose.getY());
+        Logger.recordOutput(getName() + "Rotation", estimatedPose.getRotation().getRadians());
+        Logger.recordOutput(getName() + "Estimated Pose", estimatedPose);
+    }
 }

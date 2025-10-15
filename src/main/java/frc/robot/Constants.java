@@ -25,46 +25,43 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  // Set this to Mode.REPLAY for AdvantageKit Replay
-  public static final Mode simMode = Mode.REAL;
+    // Set this to Mode.REPLAY for AdvantageKit Replay
+    public static final Mode simMode = Mode.REAL;
 
-  /** Constants for general configuration of the robot project */
-  public static class OperatorConstants {
-    public static final String PROJECT_NAME = "Swerve Template";
-    public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int OPERATOR_CONTROLLER_PORT = 1;
-    public static final boolean ENABLE_QUESTNAV = false;
-    public static final boolean ENABLE_PHOTONLIB = false;
-    public static final boolean REPLAY_LOGS = false;
-  }
+    /** Constants for general configuration of the robot project */
+    public static class OperatorConstants {
+        public static final String PROJECT_NAME = "Swerve Template";
+        public static final int DRIVER_CONTROLLER_PORT = 0;
+        public static final int OPERATOR_CONTROLLER_PORT = 1;
+        public static final boolean ENABLE_QUESTNAV = false;
+        public static final boolean ENABLE_PHOTONLIB = false;
+        public static final boolean REPLAY_LOGS = false;
+    }
 
-  /** Constants to configure QuestNav and PhotonLib vision sources */
-  public static class VisionConstants {
-    public static final String PHOTON_CAMERA_NAME = "limelight-front";
+    /** Constants to configure QuestNav and PhotonLib vision sources */
+    public static class VisionConstants {
+        public static final String PHOTON_CAMERA_NAME = "limelight-front";
 
-    public static final Matrix<N3, N1> PHOTON_CAM_VISION_TRUST = VecBuilder.fill(0.5, 0.5, 1);
+        public static final Matrix<N3, N1> PHOTON_CAM_VISION_TRUST = VecBuilder.fill(0.5, 0.5, 1);
 
-    public static final Transform3d PHOTON_CAM_RELATIVE_TO_ROBOT =
-        new Transform3d(
-            new Translation3d(
-                Units.inchesToMeters(12.0), Units.inchesToMeters(0.0), Units.inchesToMeters(9.75)),
-            new Rotation3d(0.0, 10.0, 0.0));
+        public static final Transform3d PHOTON_CAM_RELATIVE_TO_ROBOT = new Transform3d(
+                new Translation3d(Units.inchesToMeters(12.0), Units.inchesToMeters(0.0), Units.inchesToMeters(9.75)),
+                new Rotation3d(0.0, 10.0, 0.0));
 
-    public static final Matrix<N3, N1> QUESTNAV_CAM_VISION_TRUST =
-        VecBuilder.fill(0.02, 0.02, 0.035);
+        public static final Matrix<N3, N1> QUESTNAV_CAM_VISION_TRUST = VecBuilder.fill(0.02, 0.02, 0.035);
 
-    public static final Transform2d QUESTNAV_CAM_RELATIVE_TO_ROBOT =
-        new Transform2d(new Translation2d(Units.inchesToMeters(12.0), 0), new Rotation2d(0));
-  }
+        public static final Transform2d QUESTNAV_CAM_RELATIVE_TO_ROBOT =
+                new Transform2d(new Translation2d(Units.inchesToMeters(12.0), 0), new Rotation2d(0));
+    }
 
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
+    public static enum Mode {
+        /** Running on a real robot. */
+        REAL,
 
-    /** Running a physics simulator. */
-    SIM,
+        /** Running a physics simulator. */
+        SIM,
 
-    /** Replaying from a log file. */
-    REPLAY
-  }
+        /** Replaying from a log file. */
+        REPLAY
+    }
 }
