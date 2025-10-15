@@ -123,6 +123,18 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .finallyDo(() -> leadMotor.set(0));
     }
 
+    /** sets the target height and then holds the pid there. when this command is cancelled it will reset back to idle height */
+    public Command holdHeight(double targetHeight) {
+        return setTargetHeight(targetHeight)
+            .andThen(runPID())
+            .finallyDo(
+                () -> {
+                    leadMotor.set(0);
+                    altitudePidController.setSetpoint(ElevatorConstants.IDLE_TARGET_HEIGHT);
+                }
+            );
+    }
+
     /** sets the target height to the idle height */
     public Command setIdle() {
         return setTargetHeight(ElevatorConstants.IDLE_TARGET_HEIGHT);
