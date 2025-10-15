@@ -147,7 +147,7 @@ public class SwerveModule {
   }
 
   /** a method that can directly run the motors for debuging reasons */
-  public void runMotors(double driveAmount, double turnAmount){
+  public void runMotors(double driveAmount, double turnAmount) {
     driveMotor.set(driveAmount);
     turnMotor.set(turnAmount);
   }
@@ -164,10 +164,9 @@ public class SwerveModule {
   }
 
   /**
-   * 
    * @return the last input to setDesiredState()
    */
-  public SwerveModuleState getLastDesiredState(){
+  public SwerveModuleState getLastDesiredState() {
     return lastDesiredState;
   }
 

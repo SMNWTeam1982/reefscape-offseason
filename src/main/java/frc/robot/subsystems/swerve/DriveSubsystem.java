@@ -356,33 +356,30 @@ public class DriveSubsystem extends SubsystemBase {
             Math.PI / 2.0));
   }
 
-  /** 
-   * a command for debugging a specific module, note that because this command affects only one module, you can only debug one module at a time
+  /**
+   * a command for debugging a specific module, note that because this command affects only one
+   * module, you can only debug one module at a time
+   *
    * @param moduleIndex 0 = fl, 1 = fr, 2 = bl, 3 = br
    * @param driveAmount -1.0 - +1.0 scale for setting the motor
    * @param turnAmount -1.0 - +1.0 scale for setting the motor
-  */
-  public Command runModule(
-    int moduleIndex,
-    DoubleSupplier driveAmount,
-    DoubleSupplier turnAmount
-  ){
+   */
+  public Command runModule(int moduleIndex, DoubleSupplier driveAmount, DoubleSupplier turnAmount) {
     return run(
-      () -> {
-        if (moduleIndex == 0){
-          frontLeft.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
-        }
-        if (moduleIndex == 1){
-          frontRight.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
-        }
-        if (moduleIndex == 2){
-          backLeft.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
-        }
-        if (moduleIndex == 3){
-          backRight.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
-        }
-      }
-    );
+        () -> {
+          if (moduleIndex == 0) {
+            frontLeft.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
+          }
+          if (moduleIndex == 1) {
+            frontRight.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
+          }
+          if (moduleIndex == 2) {
+            backLeft.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
+          }
+          if (moduleIndex == 3) {
+            backRight.runMotors(driveAmount.getAsDouble(), turnAmount.getAsDouble());
+          }
+        });
   }
 
   /**
@@ -425,10 +422,13 @@ public class DriveSubsystem extends SubsystemBase {
     return swervePoseEstimator.getEstimatedPosition();
   }
 
-  /**gets the last desired state that the module got */
-  private SwerveModuleState[] getModuleLastDesiredStates(){
+  /** gets the last desired state that the module got */
+  private SwerveModuleState[] getModuleLastDesiredStates() {
     return new SwerveModuleState[] {
-      frontLeft.getLastDesiredState(), frontRight.getLastDesiredState(), backLeft.getLastDesiredState(), backRight.getLastDesiredState()
+      frontLeft.getLastDesiredState(),
+      frontRight.getLastDesiredState(),
+      backLeft.getLastDesiredState(),
+      backRight.getLastDesiredState()
     };
   }
 

@@ -9,23 +9,28 @@ import frc.robot.subsystems.swerve.ReefNavigation;
 
 public final class AutonomousCommands {
 
-    public static Command navigateToNearestScoringPose(
-        DriveSubsystem drive
-    ){
-        return drive.moveToPose(
-            ReefNavigation.getClosestScoringPose(drive.getEstimatedPose())
-        );
-    }
+  public static Command navigateToNearestScoringPose(DriveSubsystem drive) {
+    return drive.moveToPose(ReefNavigation.getClosestScoringPose(drive.getEstimatedPose()));
+  }
 
-    /** this command requires the drive subsystem and the elevator subsystem, meaning their default commands will be cancelled */
-    public static Command scoreNearestL2(
-        DriveSubsystem drive,
-        ElevatorSubsystem elevator,
-        IntakeSubsystem intake
-    ){
-        return navigateToNearestScoringPose(drive)
-            .andThen(elevator.moveToTargetHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT)) // move the elevator to the target
-            .andThen(intake.eject().alongWith(elevator.runPID()).withTimeout(1)) // eject the coral while holding the elevator in place
-            .andThen(elevator.setIdle()); // set the elevator to its idle state, and then the command ends and the subsystems resume their default behavior
-    }
+  /**
+   * this command requires the drive subsystem and the elevator subsystem, meaning their default
+   * commands will be cancelled
+   */
+  public static Command scoreNearestL2(
+      DriveSubsystem drive, ElevatorSubsystem elevator, IntakeSubsystem intake) {
+    return navigateToNearestScoringPose(drive)
+        .andThen(
+            elevator.moveToTargetHeight(
+                ElevatorConstants.LEVEL_2_TARGET_HEIGHT)) // move the elevator to the target
+        .andThen(
+            intake
+                .eject()
+                .alongWith(elevator.runPID())
+                .withTimeout(1)) // eject the coral while holding the elevator in place
+        .andThen(
+            elevator
+                .setIdle()); // set the elevator to its idle state, and then the command ends and
+    // the subsystems resume their default behavior
+  }
 }
