@@ -14,13 +14,10 @@ jobs:
         steps:
           - name: Checkout
             uses: actions/checkout@v5
-            with:
-              fetch-depth: 0
-              ref: ${{ github.head_ref }}
           - name: Sync-Template
             uses: AndreasAugustin/actions-template-sync@v2
             with:
-              source_gh_token: ${{ secrets.GITHUB_TOKEN }}
+              source_gh_token: ${{ secrets.SYNC_PAT }}
               source_repo_path: SMNWTeam1982/java-swerve-template
               upstream_branch: zach-edits
               pr_title: "(Chore) Sync from Upstream Template"
