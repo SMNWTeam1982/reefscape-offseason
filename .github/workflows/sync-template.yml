@@ -1,0 +1,20 @@
+on:
+    schedule:
+        - cron: "0 0 1-7,15-21 * 2"
+    workflow_dispatch:
+
+jobs:
+    template-sync:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v5
+          - name: Sync-Template
+            uses: AndreasAugustin/actions-template-sync@v2
+            with:
+              source_repo_path: SMNWTeam1982/java-swerve-template
+              upstream_branch: zach-edits
+              pr_title: "(Update) Sync from Upstream Template"

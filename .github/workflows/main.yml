@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - zach-edits
   pull_request:
     branches:
       - main
@@ -35,9 +34,10 @@ jobs:
     runs-on: ubuntu-22.04
     needs: format
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-java@v4
         with:
           distribution: "zulu"
