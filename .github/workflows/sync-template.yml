@@ -8,6 +8,7 @@ jobs:
     template-sync:
         runs-on: ubuntu-latest
         permissions:
+            actions: write
             contents: write
             pull-requests: write
         steps:
@@ -19,6 +20,8 @@ jobs:
           - name: Sync-Template
             uses: AndreasAugustin/actions-template-sync@v2
             with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
               source_repo_path: SMNWTeam1982/java-swerve-template
               upstream_branch: zach-edits
-              pr_title: "(Update) Sync from Upstream Template"
+              pr_title: "(Chore) Sync from Upstream Template"
+              pr_labels: chore, template-sync
