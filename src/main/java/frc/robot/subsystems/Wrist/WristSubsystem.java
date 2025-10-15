@@ -14,7 +14,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -178,13 +177,9 @@ public class WristSubsystem extends SubsystemBase {
 
     /** sets the target height and then holds the pid there. when this command is cancelled it will reset back to idle height */
     public Command holdAngle(Rotation2d targetAngle) {
-        return setTargetAngle(targetAngle)
-            .andThen(runPID())
-            .finallyDo(
-                () -> {
-                    pivotMotor.set(0);
-                    wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
-                }
-            );
+        return setTargetAngle(targetAngle).andThen(runPID()).finallyDo(() -> {
+            pivotMotor.set(0);
+            wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
+        });
     }
 }
