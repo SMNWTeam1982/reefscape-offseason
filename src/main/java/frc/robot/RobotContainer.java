@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
 import frc.robot.subsystems.swerve.ReefNavigation;
@@ -105,10 +106,10 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-
-        // driverController.x().whileTrue(elevatorSubsystem.moveToTargetHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT)).onFalse(elevatorSubsystem.setIdle());
-        driverController.x().whileTrue(climberSubsystem.moveClimberOut());
-        driverController.b().whileTrue(climberSubsystem.moveClimberIn());
+        operatorController.button(5).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT));
+        operatorController.button(6).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT));
+        operatorController.button(11).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT));
+        operatorController.button(7).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT));
     }
 
     private double deadZone(double number) {
@@ -117,6 +118,8 @@ public class RobotContainer {
         }
         return number;
     }
+    
+
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

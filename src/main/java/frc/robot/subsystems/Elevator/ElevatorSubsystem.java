@@ -17,8 +17,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         public static final double LEVEL_3_TARGET_HEIGHT = 1.3; // #1.268
         public static final double LEVEL_4_TARGET_HEIGHT = 1.8;
 
-        public static final double ALGAE_2_TARGET_HEIGHT = 1.2;
-
+        public static final double ALGAE_LOW_TARGET_HEIGHT = 1.3;
+        public static final double ALGAE_HIGH_TARGET_HEIGHT = 1.2;
+        
         public static final double PROCESSOR_TARGET_HEIGHT = 0.6;
 
         public static final double INTAKING_TARGET_HEIGHT = 0.78;
