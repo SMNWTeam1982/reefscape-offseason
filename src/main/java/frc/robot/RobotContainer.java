@@ -108,8 +108,12 @@ public class RobotContainer {
     private void configureOperatorBindings() {
         operatorController.button(5).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT));
         operatorController.button(6).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT));
-        operatorController.button(11).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT));
-        operatorController.button(7).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT));
+        operatorController
+                .button(11)
+                .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT));
+        operatorController
+                .button(7)
+                .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT));
     }
 
     private double deadZone(double number) {
@@ -118,8 +122,6 @@ public class RobotContainer {
         }
         return number;
     }
-    
-
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
