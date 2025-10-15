@@ -20,7 +20,7 @@ jobs:
           - name: Sync-Template
             uses: AndreasAugustin/actions-template-sync@v2
             with:
-              github_token: ${{ secrets.GITHUB_TOKEN }}
+              source_gh_token: ${{ secrets.GITHUB_TOKEN }}
               source_repo_path: SMNWTeam1982/java-swerve-template
               upstream_branch: zach-edits
               pr_title: "(Chore) Sync from Upstream Template"
