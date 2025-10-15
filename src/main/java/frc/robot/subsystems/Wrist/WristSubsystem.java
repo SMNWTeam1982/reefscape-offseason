@@ -174,4 +174,12 @@ public class WristSubsystem extends SubsystemBase {
                 .andThen(runPID().until(atTargetAngle))
                 .finallyDo(() -> pivotMotor.set(0));
     }
+
+    /** sets the target height and then holds the pid there. when this command is cancelled it will reset back to idle height */
+    public Command holdAngle(Rotation2d targetAngle) {
+        return setTargetAngle(targetAngle).andThen(runPID()).finallyDo(() -> {
+            pivotMotor.set(0);
+            wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
+        });
+    }
 }

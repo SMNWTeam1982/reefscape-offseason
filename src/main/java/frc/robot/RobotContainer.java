@@ -106,13 +106,20 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
+
         operatorController.button(1).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.INTAKING_TARGET_HEIGHT));
         operatorController.button(2).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT));
         operatorController.button(12).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT));
 
+        operatorController.button(5).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT));
+        operatorController.button(6).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT));
+        operatorController
+                .button(11)
+                .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT));
+        operatorController
+                .button(7)
+                .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT));
 
-
-        
     }
 
     private double deadZone(double number) {
