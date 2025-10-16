@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
 import frc.robot.subsystems.Wrist.CoralSubsystem;
@@ -49,7 +48,7 @@ public class RobotContainer {
 
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
-    //private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    // private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
 
     private final LoggedDashboardChooser<Command> autoChooser;
 

@@ -171,7 +171,7 @@ public class WristSubsystem extends SubsystemBase {
         });
     }
 
-    public Command setIdle(){
+    public Command setIdle() {
         return runOnce(() -> {
             wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
         });

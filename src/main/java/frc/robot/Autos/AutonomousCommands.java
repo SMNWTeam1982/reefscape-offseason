@@ -19,19 +19,16 @@ public final class AutonomousCommands {
      * this command requires the drive subsystem and the elevator subsystem, meaning their default
      * commands will be cancelled
      */
-    public static Command scoreNearestL2(DriveSubsystem drive, ElevatorSubsystem elevator,WristSubsystem wrist, CoralSubsystem intake) {
+    public static Command scoreNearestL2(
+            DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
         return navigateToNearestScoringPose(drive)
-            .andThen(
-                elevator.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT)
-                .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))
-            ).until(elevator.atTargetHeight.and(wrist.atTargetAngle))
-            .andThen(
-                intake.eject()
-                .alongWith(elevator.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT))
-                .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION)).withTimeout(1)
-            ).andThen(
-                elevator.setIdle(),
-                wrist.setIdle()
-            );
+                .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT)
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION)))
+                .until(elevator.atTargetHeight.and(wrist.atTargetAngle))
+                .andThen(intake.eject()
+                        .alongWith(elevator.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT))
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))
+                        .withTimeout(1))
+                .andThen(elevator.setIdle(), wrist.setIdle());
     }
 }
