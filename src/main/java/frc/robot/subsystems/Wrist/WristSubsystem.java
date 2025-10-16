@@ -14,6 +14,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import org.littletonrobotics.junction.Logger;
+
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -70,7 +72,7 @@ public class WristSubsystem extends SubsystemBase {
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
     }
 
-    private final SparkMax pivotMotor = new SparkMax(30, SparkMax.MotorType.kBrushless);
+    private final SparkMax pivotMotor = new SparkMax(15, SparkMax.MotorType.kBrushless);
 
     /** this is in units of rotations */
     private final RelativeEncoder pivotMotorEncoder = pivotMotor.getEncoder(); // Encoder for pivotMotor
@@ -99,6 +101,16 @@ public class WristSubsystem extends SubsystemBase {
 
         wristController.setTolerance(WristConstants.WRIST_PID_TOLERANCE);
         wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
+
+        setDefaultCommand(runPID());
+    }
+
+    @Override
+    public void periodic() {
+        Logger.recordOutput("wrist pos radians", getWristPosition().getRadians());
+        Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);
+        Logger.recordOutput("wrist error radians", wristController.getPositionError());
+
     }
 
     /** the direction of rotation is changed in the encoder config */
@@ -122,7 +134,7 @@ public class WristSubsystem extends SubsystemBase {
                     }
 
                     // pid loop tuned to output in volts
-                    double pidOutput = wristController.calculate(wristPositionRadians);
+                    double pidOutput = -wristController.calculate(wristPositionRadians);
 
                     double feedForwardOutput = gravityCompensator.calculate(
                             wristController.getSetpoint().position, wristController.getSetpoint().velocity);

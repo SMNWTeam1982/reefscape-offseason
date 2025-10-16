@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
+import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
 import frc.robot.subsystems.swerve.ReefNavigation;
@@ -39,6 +40,8 @@ public class RobotContainer {
             new DriveSubsystem(() -> visionSubsystem.getLastVisionData(), () -> visionSubsystem.isDataFresh());
 
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+
+    private final WristSubsystem wristSubsystem = new WristSubsystem();
 
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
@@ -95,17 +98,23 @@ public class RobotContainer {
                 },
                 onBlueSide));
 
-        driverController
-                .a() // automatically moves to the closest reef scoring pose
-                .debounce(0.01)
-                .whileTrue(driveSubsystem.moveToPose(
-                        ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
+        driverController.rightBumper().whileTrue(climberSubsystem.moveClimberIn());
+        driverController.leftBumper().whileTrue(climberSubsystem.moveClimberOut());
+
+        // driverController
+        //         .a() // automatically moves to the closest reef scoring pose
+        //         .debounce(0.01)
+        //         .whileTrue(driveSubsystem.moveToPose(
+        //                 ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
 
         // resets heading when button is released
-        driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
+        //driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
     }
 
     private void configureOperatorBindings() {
+
+        driverController.x().onTrue(wristSubsystem.setTargetAngle(new Rotation2d(0))).onFalse(wristSubsystem.setTargetAngle(Rotation2d.fromDegrees(45)));
+
 
         operatorController.button(1).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.INTAKING_TARGET_HEIGHT));
         operatorController.button(2).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT));
@@ -119,7 +128,6 @@ public class RobotContainer {
         operatorController
                 .button(7)
                 .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT));
-
     }
 
     private double deadZone(double number) {
