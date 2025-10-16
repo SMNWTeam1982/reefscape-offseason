@@ -120,15 +120,10 @@ public class RobotContainer {
         operatorController.button(1).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.INTAKING_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.INTAKE_POSITION)));
         operatorController.button(2).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_1_POSITION)));
         operatorController.button(12).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_MID_POSITION)));
-
         operatorController.button(5).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_MID_POSITION)));
         operatorController.button(6).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_4_POSITION)));
-        operatorController
-                .button(11)
-                .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT));
-        operatorController
-                .button(7)
-                .whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT));
+        operatorController.button(11).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LOWEST_POSITION)));
+        operatorController.button(7).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_4_POSITION)));
     }
 
     private double deadZone(double number) {
