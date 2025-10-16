@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.littletonrobotics.junction.Logger;
 
-
 public class WristSubsystem extends SubsystemBase {
 
     public static class WristConstants {
@@ -55,7 +54,7 @@ public class WristSubsystem extends SubsystemBase {
         public static final int WRIST_PDP_CHANNEL = 12;
 
         public static final double WRIST_STATIC_GAIN = 0.01;
-        public static final double WRIST_GRAVITY_GAIN = 0.6;
+        public static final double WRIST_GRAVITY_GAIN = .1;
         public static final double WRIST_VELOCITY_GAIN = 0.0;
 
         // PID values from Python code
@@ -110,7 +109,6 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("wrist pos radians", getWristPosition().getRadians());
         Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);
         Logger.recordOutput("wrist error radians", wristController.getPositionError());
-
     }
 
     /** the direction of rotation is changed in the encoder config */
@@ -134,14 +132,14 @@ public class WristSubsystem extends SubsystemBase {
                     }
 
                     // pid loop tuned to output in volts
-                    double pidOutput = -wristController.calculate(wristPositionRadians);
+                    double pidOutput = wristController.calculate(wristPositionRadians);
 
                     double feedForwardOutput = gravityCompensator.calculate(
                             wristController.getSetpoint().position, wristController.getSetpoint().velocity);
 
-                    double outputVoltage = MathUtil.clamp(feedForwardOutput + pidOutput, -12, 12);
+                    double outputVoltage = MathUtil.clamp(feedForwardOutput + pidOutput * 0, -12, 12);
 
-                    pivotMotor.setVoltage(outputVoltage);
+                    pivotMotor.setVoltage(-outputVoltage);
                 },
                 () -> pivotMotor.set(0));
     }
@@ -170,6 +168,12 @@ public class WristSubsystem extends SubsystemBase {
             Rotation2d targetAngle) { // Finds the target angle for the wrist based on button input
         return runOnce(() -> {
             wristController.setGoal(targetAngle.getRadians());
+        });
+    }
+
+    public Command setIdle(){
+        return runOnce(() -> {
+            wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
         });
     }
 

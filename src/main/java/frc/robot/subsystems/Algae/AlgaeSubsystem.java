@@ -1,6 +1,5 @@
-;package frc.robot.subsystems.Algae;
+package frc.robot.subsystems.Algae;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
@@ -10,70 +9,51 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeSubsystem extends SubsystemBase {
 
-  private final SparkMax leftMotor;
-  private final SparkMax rightMotor;
+    public static class AlgaeConstants {
+        public static final double ALGAE_INTAKE_SPEED = 0.5;
+        public static final double ALGAE_EJECT_SPEED = -0.5;
 
-  public static class AlgaeMotorConstants {
-    public static final double ALGAE_INTAKE_MAX_SPEED = 0.5;
-    public static final double ALGAE_PDP_CHANNEL = 11;
-    public static final double ALGAE_IN_CURRENT_THRESHOLD = 25;
+        public static final SparkBaseConfig ALGAE_MOTOR_CONFIG =
+                new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
+    }
 
-    public static final SparkBaseConfig LEFT_MOTOR_CONFIG =
-        new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
+    private final SparkMax rightMotor = new SparkMax(13, SparkMax.MotorType.kBrushless); // initilizes lead motor
+    private final SparkMax leftMotor = new SparkMax(0, SparkMax.MotorType.kBrushless);
 
-    public static final SparkBaseConfig RIGHT_MOTOR_CONGFIG =
-        new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
-  }
+    public AlgaeSubsystem() {
+        rightMotor.configure(
+                AlgaeConstants.ALGAE_MOTOR_CONFIG,
+                SparkBase.ResetMode.kResetSafeParameters,
+                SparkBase.PersistMode.kPersistParameters);
 
-  private final SparkMax rightleadMotor =
-      new SparkMax(14, SparkMax.MotorType.kBrushless); // initilizes lead moter motor
-  private final RelativeEncoder rightleadEncoder = rightleadMotor.getEncoder();
+        leftMotor.configure(
+                AlgaeConstants.ALGAE_MOTOR_CONFIG.follow(14, true),
+                SparkBase.ResetMode.kResetSafeParameters,
+                SparkBase.PersistMode.kPersistParameters);
+    }
 
-  private final SparkMax leftfollowingMotor = new SparkMax(12, SparkMax.MotorType.kBrushless);
-  private final RelativeEncoder leftfollowingEncoder = leftfollowingMotor.getEncoder();
+    /** starts the motor intaking and then sets it to stop when interupted */
+    public Command intake() {
+        return startEnd(() -> rightMotor.set(AlgaeConstants.ALGAE_INTAKE_SPEED), () -> rightMotor.set(0));
+    }
 
-  public AlgaeSubsystem() {
-    rightleadMotor.configure(
-        AlgaeMotorConstants.LEAD_MOTOR_CONFIG,
-        SparkBase.ResetMode.kResetSafeParameters,
-        SparkBase.PersistMode.kPersistParameters);
+    /** starts the motor ejecting and then sets it to stop when interupted */
+    public Command eject() {
+        return startEnd(() -> rightMotor.set(AlgaeConstants.ALGAE_EJECT_SPEED), () -> rightMotor.set(0));
+    }
 
-    leftfollowingMotor.configure(
-        AlgaeSubsystem.LEFT_FOLLOWING_MOTOR_CONFIG.follow(14, true),
-        SparkBase.ResetMode.kResetSafeParameters,
-        SparkBase.PersistMode.kPersistParameters);
+    /** sets the intake motor to start intaking */
+    public Command setIntaking() {
+        return runOnce(() -> rightMotor.set(AlgaeConstants.ALGAE_INTAKE_SPEED));
+    }
 
-    rightMotor = new SparkMax(14, SparkMax.MotorType.kBrushless);
-    AlgaeMotorConstants.LEAD_MOTOR_CONFIG.follow(14, true);
+    /** sets the intake motor to start ejecting */
+    public Command setEjecting() {
+        return runOnce(() -> rightMotor.set(AlgaeConstants.ALGAE_EJECT_SPEED));
+    }
 
-    rightMotor.configure(
-        AlgaeSubsystem.RIGHT_LEAD_MOTOR_CONGFIG.lead(14, true),
-        SparkBase.ResetMode.kResetSafeParameters,
-        SparkBase.PersistMode.kPersistParameters);
-  }
-  ;
-
-  public Command runintakeMotors() {
-    return runOnce(
-        () -> {
-          leftMotor.set(0.2);
-          rightMotor.set(-0.2);
-        });
-  }
-
-  public Command runejectMotors() {
-    return runOnce(
-        () -> {
-          leftMotor.set(-0.2);
-          rightMotor.set(0.2);
-        });
-  }
-
-  public Command stopMotors() {
-    return runOnce(
-        () -> {
-          leftMotor.set(0);
-          rightMotor.set(0);
-        });
-  }
+    /** sets the intake motor to 0 */
+    public Command stop() {
+        return runOnce(() -> rightMotor.set(0));
+    }
 }

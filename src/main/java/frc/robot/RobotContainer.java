@@ -16,13 +16,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
+import frc.robot.subsystems.Wrist.CoralSubsystem;
 import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.Wrist.WristSubsystem.WristConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
-import frc.robot.subsystems.swerve.ReefNavigation;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -44,7 +45,11 @@ public class RobotContainer {
 
     private final WristSubsystem wristSubsystem = new WristSubsystem();
 
+    private final CoralSubsystem coralSubsystem = new CoralSubsystem();
+
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+
+    //private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
 
     private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -109,21 +114,52 @@ public class RobotContainer {
         //                 ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
 
         // resets heading when button is released
-        //driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
+        // driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
     }
 
     private void configureOperatorBindings() {
 
-        driverController.x().onTrue(wristSubsystem.setTargetAngle(new Rotation2d(0))).onFalse(wristSubsystem.setTargetAngle(Rotation2d.fromDegrees(45)));
+        driverController.x().whileTrue(coralSubsystem.intake());
+        driverController.y().whileTrue(coralSubsystem.eject());
 
+        // driverController.a().whileTrue(algaeSubsystem.intake());
+        // driverController.b().whileTrue(algaeSubsystem.eject());
 
-        operatorController.button(1).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.INTAKING_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.INTAKE_POSITION)));
-        operatorController.button(2).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_1_POSITION)));
-        operatorController.button(12).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_MID_POSITION)));
-        operatorController.button(5).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_MID_POSITION)));
-        operatorController.button(6).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_4_POSITION)));
-        operatorController.button(11).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LOWEST_POSITION)));
-        operatorController.button(7).whileTrue(elevatorSubsystem.holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT).alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_4_POSITION)));
+        operatorController
+                .button(1)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.INTAKING_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.INTAKE_POSITION)));
+        operatorController
+                .button(2)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_1_POSITION)));
+        operatorController
+                .button(12)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_MID_POSITION)));
+        operatorController
+                .button(5)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_MID_POSITION)));
+        operatorController
+                .button(6)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.LEVEL_4_POSITION)));
+        operatorController
+                .button(11)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.STOW_POSITION)));
+        operatorController
+                .button(7)
+                .whileTrue(elevatorSubsystem
+                        .holdHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT)
+                        .alongWith(wristSubsystem.holdAngle(WristConstants.STOW_POSITION)));
     }
 
     private double deadZone(double number) {
