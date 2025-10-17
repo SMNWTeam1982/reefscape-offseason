@@ -17,8 +17,8 @@ public class AlgaeSubsystem extends SubsystemBase {
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
     }
 
-    private final SparkMax rightMotor = new SparkMax(13, SparkMax.MotorType.kBrushless); // initilizes lead motor
-    private final SparkMax leftMotor = new SparkMax(0, SparkMax.MotorType.kBrushless);
+    private final SparkMax rightMotor = new SparkMax(14, SparkMax.MotorType.kBrushless); // initilizes lead motor
+    private final SparkMax leftMotor = new SparkMax(13, SparkMax.MotorType.kBrushless);
 
     public AlgaeSubsystem() {
         rightMotor.configure(
