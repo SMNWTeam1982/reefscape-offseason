@@ -21,7 +21,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 /** Implements a Vision Subsystem for Photon Vision */
 public class PhotonVisionSubsystem extends VisionSubsystem {
 
-    public static class PhotonVisionConstants{
+    public static class PhotonVisionConstants {
         public static final String PHOTON_CAMERA_NAME = "limelight-front";
 
         public static final Matrix<N3, N1> PHOTON_CAM_VISION_TRUST = VecBuilder.fill(0.5, 0.5, 1);

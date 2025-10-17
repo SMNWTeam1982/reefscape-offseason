@@ -35,8 +35,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
 
-    private final PhotonVisionSubsystem visionSubsystem =
-            new PhotonVisionSubsystem(PhotonVisionConstants.PHOTON_CAM_RELATIVE_TO_ROBOT, PhotonVisionConstants.PHOTON_CAMERA_NAME);
+    private final PhotonVisionSubsystem visionSubsystem = new PhotonVisionSubsystem(
+            PhotonVisionConstants.PHOTON_CAM_RELATIVE_TO_ROBOT, PhotonVisionConstants.PHOTON_CAMERA_NAME);
 
     private final DriveSubsystem driveSubsystem =
             new DriveSubsystem(() -> visionSubsystem.getLastVisionData(), () -> visionSubsystem.isDataFresh());
