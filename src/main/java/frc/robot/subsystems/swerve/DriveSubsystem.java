@@ -13,9 +13,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -27,7 +25,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
@@ -65,7 +62,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static final PIDConstants TranslationPIDconstants = new PIDConstants(5.0, 0.0, 0.0);
 
-        public static final Constraints TRANZLATION_CONSTRAINTS = new Constraints(1.0,1.0);
+        public static final Constraints TRANZLATION_CONSTRAINTS = new Constraints(1.0, 1.0);
 
         public static final PIDConstants RotationPIDconstants = new PIDConstants(5.0, 0.0, 0.0);
 
@@ -127,17 +124,15 @@ public class DriveSubsystem extends SubsystemBase {
             DriveConstants.HEADING_DERIVATIVE_GAIN);
 
     private final ProfiledPIDController xController = new ProfiledPIDController(
-        DriveConstants.TranslationPIDconstants.kP,
-        DriveConstants.TranslationPIDconstants.kI,
-        DriveConstants.TranslationPIDconstants.kD,
-        DriveConstants.TRANZLATION_CONSTRAINTS
-    );
+            DriveConstants.TranslationPIDconstants.kP,
+            DriveConstants.TranslationPIDconstants.kI,
+            DriveConstants.TranslationPIDconstants.kD,
+            DriveConstants.TRANZLATION_CONSTRAINTS);
     private final ProfiledPIDController yController = new ProfiledPIDController(
-        DriveConstants.TranslationPIDconstants.kP,
-        DriveConstants.TranslationPIDconstants.kI,
-        DriveConstants.TranslationPIDconstants.kD,
-        DriveConstants.TRANZLATION_CONSTRAINTS
-    );
+            DriveConstants.TranslationPIDconstants.kP,
+            DriveConstants.TranslationPIDconstants.kI,
+            DriveConstants.TranslationPIDconstants.kD,
+            DriveConstants.TRANZLATION_CONSTRAINTS);
 
     public DriveSubsystem(Supplier<VisionData> visionDataGetter, BooleanSupplier visionFreshnessGetter) {
         this.visionDataGetter = visionDataGetter;
@@ -337,22 +332,19 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * 
+     *
      */
     public Command moveToPose(Pose2d targetPose) {
         autoField.getObject("Target").setPose(targetPose);
         return driveTopDown(
-            () -> xController.calculate(getEstimatedPose().getX(),targetPose.getX()),
-            () -> yController.calculate(getEstimatedPose().getY(),targetPose.getY()),
-            () -> targetPose.getRotation()
-        ).until(
-            () -> xController.atGoal() && yController.atGoal()
-        ).finallyDo(
-            () -> {
-                xController.reset(getEstimatedPose().getX());
-                yController.reset(getEstimatedPose().getY());
-            }
-        );
+                        () -> xController.calculate(getEstimatedPose().getX(), targetPose.getX()),
+                        () -> yController.calculate(getEstimatedPose().getY(), targetPose.getY()),
+                        () -> targetPose.getRotation())
+                .until(() -> xController.atGoal() && yController.atGoal())
+                .finallyDo(() -> {
+                    xController.reset(getEstimatedPose().getX());
+                    yController.reset(getEstimatedPose().getY());
+                });
     }
 
     /**
