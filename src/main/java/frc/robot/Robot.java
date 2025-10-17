@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -126,6 +127,12 @@ public class Robot extends LoggedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+
+        System.out.print("\n[");
+        for (Pose2d scoringPose : ReefNavigation.REEF_SCORING_POSES) {
+            System.out.print("(" + scoringPose.getX() + "," + scoringPose.getY() + "), ");
+        }
+        System.out.print("]\n");
     }
 
     /** This function is called periodically during test mode. */

@@ -38,22 +38,6 @@ public final class Constants {
         public static final boolean REPLAY_LOGS = false;
     }
 
-    /** Constants to configure QuestNav and PhotonLib vision sources */
-    public static class VisionConstants {
-        public static final String PHOTON_CAMERA_NAME = "limelight-front";
-
-        public static final Matrix<N3, N1> PHOTON_CAM_VISION_TRUST = VecBuilder.fill(0.5, 0.5, 1);
-
-        public static final Transform3d PHOTON_CAM_RELATIVE_TO_ROBOT = new Transform3d(
-                new Translation3d(Units.inchesToMeters(12.0), Units.inchesToMeters(0.0), Units.inchesToMeters(9.75)),
-                new Rotation3d(0.0, 10.0, 0.0));
-
-        public static final Matrix<N3, N1> QUESTNAV_CAM_VISION_TRUST = VecBuilder.fill(0.02, 0.02, 0.035);
-
-        public static final Transform2d QUESTNAV_CAM_RELATIVE_TO_ROBOT =
-                new Transform2d(new Translation2d(Units.inchesToMeters(12.0), 0), new Rotation2d(0));
-    }
-
     public static enum Mode {
         /** Running on a real robot. */
         REAL,

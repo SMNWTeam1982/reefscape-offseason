@@ -24,6 +24,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         public static final double INTAKING_TARGET_HEIGHT = 0.78;
 
+        public static final double IDLE_TARGET_HEIGHT = 0.6;
+
         // using the python code base pid values.
         public static final double ALTITUDE_PROPORTIONAL_GAIN = 5;
         public static final double ALTITUDE_INTERGRAL_GAIN = 0;
@@ -31,7 +33,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         public static final double ELEVATOR_HEIGHT_OFFSET = 0.56256;
         public static final double ELEVATOR_MAX_HEIGHT_METERS = 1.81;
-        public static final double IDLE_TARGET_HEIGHT = 0.6;
 
         // The current limit is temporary
         public static final SparkBaseConfig LEAD_MOTOR_CONFIG =
@@ -135,6 +136,26 @@ public class ElevatorSubsystem extends SubsystemBase {
     /** sets the target height to the idle height */
     public Command setIdle() {
         return setTargetHeight(ElevatorConstants.IDLE_TARGET_HEIGHT);
+    }
+
+    public Command setStation() {
+        return setTargetHeight(ElevatorConstants.INTAKING_TARGET_HEIGHT);
+    }
+
+    public Command setL1() {
+        return setTargetHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT);
+    }
+
+    public Command setL2() {
+        return setTargetHeight(ElevatorConstants.LEVEL_2_TARGET_HEIGHT);
+    }
+
+    public Command setL3() {
+        return setTargetHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT);
+    }
+
+    public Command setL4() {
+        return setTargetHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT);
     }
 
     public Command stopMotors() {

@@ -1,22 +1,30 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.Constants.VisionConstants;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 import java.util.Optional;
 
 /** Implements a Vision Subsystem for QuestNav */
 public class QuestNavSubsystem extends VisionSubsystem {
-    public QuestNav quest = new QuestNav();
 
-    @Override
-    public void periodic() {
-        quest.commandPeriodic();
-        super.periodic();
+    public static class QuestNavConstants{
+        public static final Matrix<N3, N1> QUESTNAV_CAM_VISION_TRUST = VecBuilder.fill(0.02, 0.02, 0.035);
+
+        public static final Transform2d QUESTNAV_CAM_RELATIVE_TO_ROBOT =
+                new Transform2d(new Translation2d(Units.inchesToMeters(12.0), 0), new Rotation2d(0));
     }
+
+    public QuestNav quest = new QuestNav();
 
     public String getName() {
         return "quest nav";
@@ -28,12 +36,14 @@ public class QuestNavSubsystem extends VisionSubsystem {
     }
 
     protected Optional<VisionData> getVisionResult() {
-        Optional<PoseFrame> lastEstimatedPose = Optional.empty();
-        PoseFrame[] poseFrames = quest.getAllUnreadPoseFrames();
+        quest.commandPeriodic();
 
-        if (poseFrames.length > 0) {
-            lastEstimatedPose = Optional.of(poseFrames[poseFrames.length - 1]);
-        }
+        Optional<PoseFrame> lastEstimatedPose = Optional.empty();
+
+        for (var result : quest.getAllUnreadPoseFrames()) {
+            lastEstimatedPose = Optional.of(result);
+        } // if getAllUnreadPoseFrames() is empty then lastEstimatedPose will be Optional.empty()
+        // this also accounts for results that have data but are surrounded by results without data
 
         if (lastEstimatedPose.isEmpty()) {
             return Optional.empty();
@@ -42,7 +52,7 @@ public class QuestNavSubsystem extends VisionSubsystem {
         return Optional.of(new VisionData(
                 lastEstimatedPose.get().questPose(),
                 lastEstimatedPose.get().dataTimestamp(),
-                Constants.VisionConstants.QUESTNAV_CAM_VISION_TRUST));
+                QuestNavConstants.QUESTNAV_CAM_VISION_TRUST));
     }
 
     /**
@@ -51,10 +61,7 @@ public class QuestNavSubsystem extends VisionSubsystem {
      * @return True if the Quest is ready and tracking, false otherwise
      */
     public boolean isReady() {
-        if (quest.isConnected() && quest.isTracking()) {
-            return true;
-        }
-        return false;
+        return (quest.isConnected() && quest.isTracking());
     }
 
     /**
@@ -62,9 +69,14 @@ public class QuestNavSubsystem extends VisionSubsystem {
      *
      * @param pose The desired pose as as a {@link Pose2d} Object
      */
+    @Override
     public Command resetPose(Pose2d pose) {
-        Pose2d questPose = pose.transformBy(VisionConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT);
-        quest.setPose(questPose);
-        return runOnce(() -> {});
+        return runOnce(
+            () -> {
+                Translation2d robotTranslation = pose.getTranslation().plus(QuestNavConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT.getTranslation());
+                Pose2d questPose = new Pose2d(robotTranslation, pose.getRotation().plus(QuestNavConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT.getRotation()));
+                quest.setPose(questPose);
+            }
+        );
     }
 }

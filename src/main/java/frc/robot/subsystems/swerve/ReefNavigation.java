@@ -4,7 +4,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -18,7 +17,7 @@ public final class ReefNavigation {
      * out by 20 inches (to account for the robot width), down 5.5 (for the intake offset), then up or
      * down 6.5 for the left or right branch
      *
-     * <p>to use these, rotate them to the angle of the tag then add them to its position to get the
+     * <p>to use these, rotate them by the angle of the tag then add them to its position to get the
      * translation of the scoring pose
      */
     public static final Translation2d RIGHT_SCORING_VECTOR =
@@ -45,6 +44,7 @@ public final class ReefNavigation {
         getRightBranchScoringPose(21),
         getLeftBranchScoringPose(22),
         getRightBranchScoringPose(22),
+        /*-----------------------------------------*/
         getLeftBranchScoringPose(6),
         getRightBranchScoringPose(6),
         getLeftBranchScoringPose(7),
@@ -79,7 +79,13 @@ public final class ReefNavigation {
 
         Translation2d rightBranch = RIGHT_SCORING_VECTOR.rotateBy(tagPose.getRotation());
 
-        Pose2d rightBranchTarget = tagPose.transformBy(new Transform2d(rightBranch, new Rotation2d(Math.PI)));
+        Translation2d targetTranslation = tagPose.getTranslation().plus(rightBranch);
+
+        Rotation2d targetRotation = tagPose.getRotation().plus(new Rotation2d(Math.PI));
+
+        Pose2d rightBranchTarget = new Pose2d(
+                targetTranslation,
+                targetRotation); // tagPose.transformBy(new Transform2d(rightBranch, new Rotation2d(Math.PI)));
 
         return rightBranchTarget;
     }
@@ -89,7 +95,11 @@ public final class ReefNavigation {
 
         Translation2d leftBranch = LEFT_SCORING_VECTOR.rotateBy(tagPose.getRotation());
 
-        Pose2d leftBranchTarget = tagPose.transformBy(new Transform2d(leftBranch, new Rotation2d(Math.PI)));
+        Translation2d targetTranslation = tagPose.getTranslation().plus(leftBranch);
+
+        Rotation2d targetRotation = tagPose.getRotation().plus(new Rotation2d(Math.PI));
+
+        Pose2d leftBranchTarget = new Pose2d(targetTranslation, targetRotation);
 
         return leftBranchTarget;
     }

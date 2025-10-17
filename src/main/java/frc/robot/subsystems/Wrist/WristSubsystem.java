@@ -109,6 +109,7 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("wrist pos radians", getWristPosition().getRadians());
         Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);
         Logger.recordOutput("wrist error radians", wristController.getPositionError());
+        Logger.recordOutput("wrist current output", pivotMotor.getOutputCurrent());
     }
 
     /** the direction of rotation is changed in the encoder config */
@@ -172,9 +173,23 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public Command setIdle() {
-        return runOnce(() -> {
-            wristController.setGoal(WristConstants.STOW_POSITION.getRadians());
-        });
+        return setTargetAngle(WristConstants.STOW_POSITION);
+    }
+
+    public Command setStation() {
+        return setTargetAngle(WristConstants.INTAKE_POSITION);
+    }
+
+    public Command setL1() {
+        return setTargetAngle(WristConstants.LEVEL_1_POSITION);
+    }
+
+    public Command setL2and3() {
+        return setTargetAngle(WristConstants.LEVEL_MID_POSITION);
+    }
+
+    public Command setL4() {
+        return setTargetAngle(WristConstants.LEVEL_4_POSITION);
     }
 
     /**

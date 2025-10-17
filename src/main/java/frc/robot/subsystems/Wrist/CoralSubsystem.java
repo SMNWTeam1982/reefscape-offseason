@@ -19,9 +19,40 @@ public class CoralSubsystem extends SubsystemBase {
 
     private final SparkMax intakeMotor = new SparkMax(16, SparkMax.MotorType.kBrushless);
 
+    private boolean intaking = true;
+
     public CoralSubsystem() {
         intakeMotor.configure(
                 CoralConstants.INTAKE_MOTOR_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+    /** either intakes or ejects based on if setIntaking or setEjecting was ran
+     * <p> sets the motor to stop when interupted
+     */
+    public Command intakeEject() {
+        return runEnd(
+                () -> {
+                    if (intaking) {
+                        intakeMotor.set(CoralConstants.CORAL_INTAKE_SPEED);
+                    } else {
+                        intakeMotor.set(CoralConstants.CORAL_EJECT_SPEED);
+                    }
+                },
+                () -> intakeMotor.set(0));
+    }
+
+    /** sets the intake to start intaking when intakeEject is ran */
+    public Command setIntaking() {
+        return runOnce(() -> {
+            intaking = true;
+        });
+    }
+
+    /** sets the intake to start ejecting when intakeEject is ran */
+    public Command setEjecting() {
+        return runOnce(() -> {
+            intaking = false;
+        });
     }
 
     /** starts the motor intaking and then sets it to stop when interupted */
@@ -32,16 +63,6 @@ public class CoralSubsystem extends SubsystemBase {
     /** starts the motor ejecting and then sets it to stop when interupted */
     public Command eject() {
         return startEnd(() -> intakeMotor.set(CoralConstants.CORAL_EJECT_SPEED), () -> intakeMotor.set(0));
-    }
-
-    /** sets the intake motor to start intaking */
-    public Command setIntaking() {
-        return runOnce(() -> intakeMotor.set(CoralConstants.CORAL_INTAKE_SPEED));
-    }
-
-    /** sets the intake motor to start ejecting */
-    public Command setEjecting() {
-        return runOnce(() -> intakeMotor.set(CoralConstants.CORAL_EJECT_SPEED));
     }
 
     /** sets the intake motor to 0 */
