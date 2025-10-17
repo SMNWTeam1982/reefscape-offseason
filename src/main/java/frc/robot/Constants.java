@@ -14,7 +14,7 @@ package frc.robot;
  */
 public final class Constants {
 
-    public static class DriveCANIDs{
+    public static class DriveCANIDs {
         public static final int BR_TURN = 0;
         public static final int BR_DRIVE = 0;
         public static final int BR_ENCODER = 0;

@@ -120,31 +120,29 @@ public class RobotContainer {
 
     private void configureOperatorBindings() {
 
-        
-
         SmartDashboard.putNumber("wristS", wristSubsystem.getFeedForwardValues()[0]);
         SmartDashboard.putNumber("wristG", wristSubsystem.getFeedForwardValues()[1]);
         SmartDashboard.putNumber("wristV", wristSubsystem.getFeedForwardValues()[2]);
 
-        driverController.a().debounce(0.1).onTrue(
-            wristSubsystem.changeFeedForwardValues(
-                SmartDashboard.getNumber("wristS", 0), 
-                SmartDashboard.getNumber("wristG", 0), 
-                SmartDashboard.getNumber("wristV", 0)
-            )
-        );
+        driverController
+                .a()
+                .debounce(0.1)
+                .onTrue(wristSubsystem.changeFeedForwardValues(
+                        SmartDashboard.getNumber("wristS", 0),
+                        SmartDashboard.getNumber("wristG", 0),
+                        SmartDashboard.getNumber("wristV", 0)));
 
         SmartDashboard.putNumber("wristP", wristSubsystem.getPIDValues()[0]);
         SmartDashboard.putNumber("wristI", wristSubsystem.getPIDValues()[1]);
         SmartDashboard.putNumber("wristD", wristSubsystem.getPIDValues()[2]);
 
-        driverController.b().debounce(0.1).onTrue(
-            wristSubsystem.changePIDValues(
-                SmartDashboard.getNumber("wristP", 0), 
-                SmartDashboard.getNumber("wristI", 0), 
-                SmartDashboard.getNumber("wristD", 0)
-            )
-        );
+        driverController
+                .b()
+                .debounce(0.1)
+                .onTrue(wristSubsystem.changePIDValues(
+                        SmartDashboard.getNumber("wristP", 0),
+                        SmartDashboard.getNumber("wristI", 0),
+                        SmartDashboard.getNumber("wristD", 0)));
 
         operatorController.button(10).whileTrue(coralSubsystem.intakeEject());
 
