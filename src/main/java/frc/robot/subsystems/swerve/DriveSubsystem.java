@@ -470,6 +470,4 @@ public class DriveSubsystem extends SubsystemBase {
     public Command nudgeLeft() {
         return driveRobotRelative(() -> new ChassisSpeeds(0, DriveConstants.NUDGE_SPEED, 0));
     }
-
-  
 }
