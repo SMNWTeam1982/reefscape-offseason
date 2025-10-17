@@ -10,7 +10,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +21,8 @@ public class WristSubsystem extends SubsystemBase {
     public static class WristConstants {
         public static final Rotation2d LEVEL_1_POSITION = Rotation2d.fromDegrees(0);
         public static final Rotation2d LEVEL_MID_POSITION = Rotation2d.fromDegrees(-20);
-        public static final Rotation2d LEVEL_4_POSITION = Rotation2d.fromDegrees(5); // add a little up movement to encourage the pid to be flat
+        public static final Rotation2d LEVEL_4_POSITION =
+                Rotation2d.fromDegrees(5); // add a little up movement to encourage the pid to be flat
         public static final Rotation2d INTAKE_POSITION = Rotation2d.fromDegrees(35);
         public static final Rotation2d STOW_POSITION = Rotation2d.fromDegrees(60);
 
@@ -146,18 +146,16 @@ public class WristSubsystem extends SubsystemBase {
                 () -> pivotMotor.set(0));
     }
 
-    public Command logTuningConstants(){
-        return runOnce(
-            () -> {
-                SmartDashboard.putNumber("wristS", getFeedForwardValues()[0]);
-                SmartDashboard.putNumber("wristG", getFeedForwardValues()[1]);
-                SmartDashboard.putNumber("wristV", getFeedForwardValues()[2]);
+    public Command logTuningConstants() {
+        return runOnce(() -> {
+            SmartDashboard.putNumber("wristS", getFeedForwardValues()[0]);
+            SmartDashboard.putNumber("wristG", getFeedForwardValues()[1]);
+            SmartDashboard.putNumber("wristV", getFeedForwardValues()[2]);
 
-                SmartDashboard.putNumber("wristP", getPIDValues()[0]);
-                SmartDashboard.putNumber("wristI", getPIDValues()[1]);
-                SmartDashboard.putNumber("wristD", getPIDValues()[2]);
-            }
-        );
+            SmartDashboard.putNumber("wristP", getPIDValues()[0]);
+            SmartDashboard.putNumber("wristI", getPIDValues()[1]);
+            SmartDashboard.putNumber("wristD", getPIDValues()[2]);
+        });
     }
 
     public double[] getPIDValues() {
@@ -166,7 +164,6 @@ public class WristSubsystem extends SubsystemBase {
 
     public Command changePIDValues(double newP, double newI, double newD) {
         return runOnce(() -> wristController.setPID(newP, newI, newD));
-
     }
 
     public double[] getFeedForwardValues() {

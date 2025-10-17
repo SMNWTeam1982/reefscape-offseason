@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,7 +27,6 @@ import frc.robot.subsystems.swerve.ReefNavigation;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem.PhotonVisionConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
