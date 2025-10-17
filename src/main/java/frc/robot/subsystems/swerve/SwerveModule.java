@@ -26,7 +26,7 @@ public class SwerveModule {
     /** constants that are related to the swerve module */
     public static class SwerveModuleConstants {
         /** a number that is measured every year */
-        public static final double POSITION_TO_METERS_MULTIPLIER = 0.31927 / 6.75;
+        public static final double POSITION_TO_METERS_MULTIPLIER = -0.31927 / 6.75;
 
         public static final double RPM_TO_MPS_MULTIPLIER = POSITION_TO_METERS_MULTIPLIER / 60;
 
@@ -46,7 +46,7 @@ public class SwerveModule {
         public static final double DRIVE_VELOCITY_GAIN_VOLT_SECONDS_PER_METER = 2.87;
 
         public static final SparkBaseConfig DRIVE_MOTOR_CONFIG =
-                new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
+                new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kBrake);
         public static final SparkBaseConfig TURN_MOTOR_CONFIG =
                 new SparkMaxConfig().smartCurrentLimit(30).idleMode(SparkBaseConfig.IdleMode.kCoast);
     }

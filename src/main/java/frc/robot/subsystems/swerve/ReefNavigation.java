@@ -4,6 +4,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -77,15 +78,7 @@ public final class ReefNavigation {
     public static Pose2d getRightBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Translation2d rightBranch = RIGHT_SCORING_VECTOR.rotateBy(tagPose.getRotation());
-
-        Translation2d targetTranslation = tagPose.getTranslation().plus(rightBranch);
-
-        Rotation2d targetRotation = tagPose.getRotation(); // .plus(new Rotation2d(Math.PI));
-
-        Pose2d rightBranchTarget = new Pose2d(
-                targetTranslation,
-                targetRotation); // tagPose.transformBy(new Transform2d(rightBranch, new Rotation2d(Math.PI)));
+        Pose2d rightBranchTarget = tagPose.transformBy(new Transform2d(RIGHT_SCORING_VECTOR, new Rotation2d(Math.PI)));
 
         return rightBranchTarget;
     }
@@ -93,13 +86,7 @@ public final class ReefNavigation {
     public static Pose2d getLeftBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Translation2d leftBranch = LEFT_SCORING_VECTOR.rotateBy(tagPose.getRotation());
-
-        Translation2d targetTranslation = tagPose.getTranslation().plus(leftBranch);
-
-        Rotation2d targetRotation = tagPose.getRotation(); // .plus(new Rotation2d(Math.PI));
-
-        Pose2d leftBranchTarget = new Pose2d(targetTranslation, targetRotation);
+        Pose2d leftBranchTarget = tagPose.transformBy(new Transform2d(LEFT_SCORING_VECTOR, new Rotation2d(Math.PI)));
 
         return leftBranchTarget;
     }
