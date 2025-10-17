@@ -44,6 +44,7 @@ import org.littletonrobotics.junction.Logger;
 
 /** Command-Based Drivetrain subsytem for Swerve Drive */
 public class DriveSubsystem extends SubsystemBase {
+
     public static class DriveConstants {
         public static final double PHYSICAL_MAX_MPS = 3.8;
 
@@ -51,6 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static final double DRIVE_PERIOD = TimedRobot.kDefaultPeriod;
         public static final boolean GYRO_REVERSED = false;
+
+        public static final double NUDGE_SPEED = .1;
 
         public static final double HEADING_PROPORTIONAL_GAIN = 1.0;
         public static final double HEADING_INTEGRAL_GAIN = 0.0;
@@ -451,4 +454,22 @@ public class DriveSubsystem extends SubsystemBase {
         Logger.recordOutput("Drive/Swerve Module States", getModuleStates());
         Logger.recordOutput("Drive/Linear Velocity", getLinearVelocity());
     }
+
+    public Command nudgeForward() {
+        return driveRobotRelative(() -> new ChassisSpeeds(DriveConstants.NUDGE_SPEED, 0, 0));
+    }
+
+    public Command nudgeBack() {
+        return driveRobotRelative(() -> new ChassisSpeeds(-DriveConstants.NUDGE_SPEED, 0, 0));
+    }
+
+    public Command nudgeRight() {
+        return driveRobotRelative(() -> new ChassisSpeeds(0, DriveConstants.NUDGE_SPEED, 0));
+    }
+
+    public Command nudgeLeft() {
+        return driveRobotRelative(() -> new ChassisSpeeds(0, DriveConstants.NUDGE_SPEED, 0));
+    }
+
+  
 }
