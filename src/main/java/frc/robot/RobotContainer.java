@@ -111,7 +111,7 @@ public class RobotContainer {
         driverController
                 .a() // automatically moves to the closest reef scoring pose
                 .debounce(0.1)
-                .onFalse(driveSubsystem.moveToPose(
+                .whileTrue(driveSubsystem.moveToPose(
                         ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
 
         // resets heading when button is released

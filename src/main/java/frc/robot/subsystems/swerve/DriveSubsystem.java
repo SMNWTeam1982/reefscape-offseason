@@ -15,7 +15,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +27,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.util.sendable.Sendable;
@@ -58,7 +62,11 @@ public class DriveSubsystem extends SubsystemBase {
         public static final double HEADING_PROPORTIONAL_GAIN = 1.0;
         public static final double HEADING_INTEGRAL_GAIN = 0.0;
         public static final double HEADING_DERIVATIVE_GAIN = 0.0;
+
         public static final PIDConstants TranslationPIDconstants = new PIDConstants(5.0, 0.0, 0.0);
+
+        public static final Constraints TRANZLATION_CONSTRAINTS = new Constraints(1.0,1.0);
+
         public static final PIDConstants RotationPIDconstants = new PIDConstants(5.0, 0.0, 0.0);
 
         public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.2635, 0.2635);
@@ -117,6 +125,19 @@ public class DriveSubsystem extends SubsystemBase {
             DriveConstants.HEADING_PROPORTIONAL_GAIN,
             DriveConstants.HEADING_INTEGRAL_GAIN,
             DriveConstants.HEADING_DERIVATIVE_GAIN);
+
+    private final ProfiledPIDController xController = new ProfiledPIDController(
+        DriveConstants.TranslationPIDconstants.kP,
+        DriveConstants.TranslationPIDconstants.kI,
+        DriveConstants.TranslationPIDconstants.kD,
+        DriveConstants.TRANZLATION_CONSTRAINTS
+    );
+    private final ProfiledPIDController yController = new ProfiledPIDController(
+        DriveConstants.TranslationPIDconstants.kP,
+        DriveConstants.TranslationPIDconstants.kI,
+        DriveConstants.TranslationPIDconstants.kD,
+        DriveConstants.TRANZLATION_CONSTRAINTS
+    );
 
     public DriveSubsystem(Supplier<VisionData> visionDataGetter, BooleanSupplier visionFreshnessGetter) {
         this.visionDataGetter = visionDataGetter;
@@ -316,18 +337,22 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * uses the AutoBuilder to create a Command to move to a position
-     *
-     * <p>use this factory instead of manually calling the pathfindToPose fuction from the AutoBuilder
+     * 
      */
     public Command moveToPose(Pose2d targetPose) {
-        return AutoBuilder.pathfindToPose(
-                targetPose,
-                new PathConstraints(
-                        0.5,
-                        0.5,
-                        Math.PI / 2.0, // quarter rotation per second
-                        Math.PI / 2.0));
+        autoField.getObject("Target").setPose(targetPose);
+        return driveTopDown(
+            () -> xController.calculate(getEstimatedPose().getX(),targetPose.getX()),
+            () -> yController.calculate(getEstimatedPose().getY(),targetPose.getY()),
+            () -> targetPose.getRotation()
+        ).until(
+            () -> xController.atGoal() && yController.atGoal()
+        ).finallyDo(
+            () -> {
+                xController.reset(getEstimatedPose().getX());
+                yController.reset(getEstimatedPose().getY());
+            }
+        );
     }
 
     /**
