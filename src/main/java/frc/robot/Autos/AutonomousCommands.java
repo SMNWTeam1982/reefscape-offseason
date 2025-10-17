@@ -11,8 +11,12 @@ import frc.robot.subsystems.swerve.ReefNavigation;
 
 public final class AutonomousCommands {
 
+    /**
+     * creates a new moveToPose command with a new target every time this command is ititialized
+     * <p> the target pose wont change while the command is running but will change on init
+     */
     public static Command navigateToNearestScoringPose(DriveSubsystem drive) {
-        return drive.moveToPose(ReefNavigation.getClosestScoringPose(drive.getEstimatedPose()));
+        return drive.defer(() -> drive.moveToPose(ReefNavigation.getClosestScoringPose(drive.getEstimatedPose())));
     }
 
     /**

@@ -14,6 +14,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -56,22 +57,18 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static final double NUDGE_SPEED = .1;
 
-        public static final double HEADING_PROPORTIONAL_GAIN = 1.0;
-        public static final double HEADING_INTEGRAL_GAIN = 0.0;
-        public static final double HEADING_DERIVATIVE_GAIN = 0.0;
+        public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
 
-        public static final PIDConstants TranslationPIDconstants = new PIDConstants(5.0, 0.0, 0.0);
+        public static final Constraints TRANSLATION_CONSTRAINTS = new Constraints(1.0, 1.0);
 
-        public static final Constraints TRANZLATION_CONSTRAINTS = new Constraints(1.0, 1.0);
-
-        public static final PIDConstants RotationPIDconstants = new PIDConstants(5.0, 0.0, 0.0);
+        public static final PIDConstants ROTATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
 
         public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.2635, 0.2635);
         public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(0.2635, -0.2635);
         public static final Translation2d REAR_LEFT_TRANSLATION = new Translation2d(-0.2635, 0.2635);
         public static final Translation2d REAR_RIGHT_TRANSLATION = new Translation2d(-0.2635, -0.2635);
 
-        public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+        public static final SwerveDriveKinematics SWERVE_KINEMATICS = new SwerveDriveKinematics(
                 FRONT_LEFT_TRANSLATION, FRONT_RIGHT_TRANSLATION, REAR_LEFT_TRANSLATION, REAR_RIGHT_TRANSLATION);
     }
 
@@ -112,27 +109,27 @@ public class DriveSubsystem extends SubsystemBase {
 
     /** the swerve drive is initialized with a default Pose2d, (0 x, 0 y, 0 rotation) */
     private final SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
-            DriveConstants.swerveKinematics, gyro.getRotation2d(), getModulePositions(), new Pose2d());
+            DriveConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), getModulePositions(), new Pose2d());
 
     /**
      * this controller is used for "top down" robot control. give this controller the current heading
      * and the desired heading and it will output in radians per second
      */
     private final PIDController headingController = new PIDController(
-            DriveConstants.HEADING_PROPORTIONAL_GAIN,
-            DriveConstants.HEADING_INTEGRAL_GAIN,
-            DriveConstants.HEADING_DERIVATIVE_GAIN);
+            DriveConstants.ROTATION_PID_CONSTANTS.kP,
+            DriveConstants.ROTATION_PID_CONSTANTS.kI,
+            DriveConstants.ROTATION_PID_CONSTANTS.kD);
 
     private final ProfiledPIDController xController = new ProfiledPIDController(
-            DriveConstants.TranslationPIDconstants.kP,
-            DriveConstants.TranslationPIDconstants.kI,
-            DriveConstants.TranslationPIDconstants.kD,
-            DriveConstants.TRANZLATION_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kD,
+            DriveConstants.TRANSLATION_CONSTRAINTS);
     private final ProfiledPIDController yController = new ProfiledPIDController(
-            DriveConstants.TranslationPIDconstants.kP,
-            DriveConstants.TranslationPIDconstants.kI,
-            DriveConstants.TranslationPIDconstants.kD,
-            DriveConstants.TRANZLATION_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kD,
+            DriveConstants.TRANSLATION_CONSTRAINTS);
 
     public DriveSubsystem(Supplier<VisionData> visionDataGetter, BooleanSupplier visionFreshnessGetter) {
         this.visionDataGetter = visionDataGetter;
@@ -206,8 +203,8 @@ public class DriveSubsystem extends SubsystemBase {
                 this::getRobotRelativeSpeeds,
                 (speeds) -> setModulesFromRobotRelativeSpeeds(speeds),
                 new PPHolonomicDriveController(
-                        DriveConstants.TranslationPIDconstants, // Translation PID constants
-                        DriveConstants.RotationPIDconstants // Rotation PID constants
+                        DriveConstants.TRANSLATION_PID_CONSTANTS, // Translation PID constants
+                        DriveConstants.ROTATION_PID_CONSTANTS // Rotation PID constants
                         ),
                 PathPlannerConstants.PATHPLANNER_CONFIG,
                 () -> {
@@ -332,21 +329,29 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     *
+     * creates a command to move the robot to a specific pose
+     * <p>note that the target pose doesnt change when the command is run multiple times
      */
     public Command moveToPose(Pose2d targetPose) {
-        autoField.getObject("Target").setPose(targetPose);
-        return driveTopDown(
-                        () -> xController.calculate(getEstimatedPose().getX(), targetPose.getX()),
-                        () -> yController.calculate(getEstimatedPose().getY(), targetPose.getY()),
-                        () -> targetPose.getRotation())
-                .until(() -> xController.atGoal() && yController.atGoal())
+        return runOnce(() -> autoField.getObject("Target").setPose(targetPose))
+                .andThen(driveTopDown(
+                                () -> {
+                                    double output = xController.calculate(
+                                            getEstimatedPose().getX(), targetPose.getX());
+                                    return MathUtil.clamp(output, -1, 1);
+                                },
+                                () -> {
+                                    double output = yController.calculate(
+                                            getEstimatedPose().getY(), targetPose.getY());
+                                    return MathUtil.clamp(output, -1, 1);
+                                },
+                                () -> targetPose.getRotation())
+                        .until(() -> xController.atGoal() && yController.atGoal()))
                 .finallyDo(() -> {
                     xController.reset(getEstimatedPose().getX());
                     yController.reset(getEstimatedPose().getY());
                 });
     }
-
     /**
      * a command for debugging a specific module, note that because this command affects only one
      * module, you can only debug one module at a time
@@ -381,7 +386,7 @@ public class DriveSubsystem extends SubsystemBase {
     private void setModulesFromRobotRelativeSpeeds(ChassisSpeeds speeds) {
         Logger.recordOutput("final robot relative speeds", speeds);
         ChassisSpeeds.discretize(speeds, DriveConstants.DRIVE_PERIOD);
-        SwerveModuleState[] moduleStates = DriveConstants.swerveKinematics.toSwerveModuleStates(speeds);
+        SwerveModuleState[] moduleStates = DriveConstants.SWERVE_KINEMATICS.toSwerveModuleStates(speeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.ARTIFICIAL_MAX_MPS);
         setModuleStates(moduleStates);
     }
@@ -448,7 +453,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @return robot relative ChassisSpeeds, see the wpilib coordinate system for more info
      */
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        return DriveConstants.swerveKinematics.toChassisSpeeds(getModuleStates());
+        return DriveConstants.SWERVE_KINEMATICS.toChassisSpeeds(getModuleStates());
     }
 
     /**
@@ -481,7 +486,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command nudgeRight() {
-        return driveRobotRelative(() -> new ChassisSpeeds(0, DriveConstants.NUDGE_SPEED, 0));
+        return driveRobotRelative(() -> new ChassisSpeeds(0, -DriveConstants.NUDGE_SPEED, 0));
     }
 
     public Command nudgeLeft() {
