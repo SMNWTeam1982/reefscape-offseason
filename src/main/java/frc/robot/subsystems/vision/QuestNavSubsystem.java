@@ -17,7 +17,7 @@ import java.util.Optional;
 /** Implements a Vision Subsystem for QuestNav */
 public class QuestNavSubsystem extends VisionSubsystem {
 
-    public static class QuestNavConstants{
+    public static class QuestNavConstants {
         public static final Matrix<N3, N1> QUESTNAV_CAM_VISION_TRUST = VecBuilder.fill(0.02, 0.02, 0.035);
 
         public static final Transform2d QUESTNAV_CAM_RELATIVE_TO_ROBOT =
@@ -71,12 +71,13 @@ public class QuestNavSubsystem extends VisionSubsystem {
      */
     @Override
     public Command resetPose(Pose2d pose) {
-        return runOnce(
-            () -> {
-                Translation2d robotTranslation = pose.getTranslation().plus(QuestNavConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT.getTranslation());
-                Pose2d questPose = new Pose2d(robotTranslation, pose.getRotation().plus(QuestNavConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT.getRotation()));
-                quest.setPose(questPose);
-            }
-        );
+        return runOnce(() -> {
+            Translation2d robotTranslation =
+                    pose.getTranslation().plus(QuestNavConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT.getTranslation());
+            Pose2d questPose = new Pose2d(
+                    robotTranslation,
+                    pose.getRotation().plus(QuestNavConstants.QUESTNAV_CAM_RELATIVE_TO_ROBOT.getRotation()));
+            quest.setPose(questPose);
+        });
     }
 }
