@@ -81,7 +81,7 @@ public final class ReefNavigation {
 
         Translation2d targetTranslation = tagPose.getTranslation().plus(rightBranch);
 
-        Rotation2d targetRotation = tagPose.getRotation().plus(new Rotation2d(Math.PI));
+        Rotation2d targetRotation = tagPose.getRotation();//.plus(new Rotation2d(Math.PI));
 
         Pose2d rightBranchTarget = new Pose2d(
                 targetTranslation,
@@ -97,7 +97,7 @@ public final class ReefNavigation {
 
         Translation2d targetTranslation = tagPose.getTranslation().plus(leftBranch);
 
-        Rotation2d targetRotation = tagPose.getRotation().plus(new Rotation2d(Math.PI));
+        Rotation2d targetRotation = tagPose.getRotation();//.plus(new Rotation2d(Math.PI));
 
         Pose2d leftBranchTarget = new Pose2d(targetTranslation, targetRotation);
 

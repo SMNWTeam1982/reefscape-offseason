@@ -53,14 +53,14 @@ public class WristSubsystem extends SubsystemBase {
 
         public static final int WRIST_PDP_CHANNEL = 12;
 
-        public static final double WRIST_STATIC_GAIN = 0.01;
-        public static final double WRIST_GRAVITY_GAIN = .1;
-        public static final double WRIST_VELOCITY_GAIN = 0.0;
+        public static final double WRIST_STATIC_GAIN = 0;//0.01;
+        public static final double WRIST_GRAVITY_GAIN = 0;//.1;
+        public static final double WRIST_VELOCITY_GAIN = 0;//0.0;
 
         // PID values from Python code
-        public static final double WRIST_PROPORTIONAL_GAIN = 8;
-        public static final double WRIST_INTEGRAL_GAIN = 0.1;
-        public static final double WRIST_DERIVATIVE_GAIN = 0.2;
+        public static final double WRIST_PROPORTIONAL_GAIN = 0;//8;
+        public static final double WRIST_INTEGRAL_GAIN = 0;//0.1;
+        public static final double WRIST_DERIVATIVE_GAIN = 0;//0.2;
 
         public static final double WRIST_PID_TOLERANCE = Units.degreesToRadians(3);
 
@@ -138,11 +138,45 @@ public class WristSubsystem extends SubsystemBase {
                     double feedForwardOutput = gravityCompensator.calculate(
                             wristController.getSetpoint().position, wristController.getSetpoint().velocity);
 
-                    double outputVoltage = MathUtil.clamp(feedForwardOutput + pidOutput * 0, -12, 12);
+                    double outputVoltage = MathUtil.clamp(feedForwardOutput + pidOutput, -12, 12);
+
+                    Logger.recordOutput("wrist voltage output", -outputVoltage);
 
                     pivotMotor.setVoltage(-outputVoltage);
                 },
                 () -> pivotMotor.set(0));
+    }
+
+    public double[] getPIDValues() {
+        return new double[] {
+            wristController.getP(),
+            wristController.getI(),
+            wristController.getD()
+        };
+    }
+
+    public Command changePIDValues(double newP, double newI, double newD){
+        return runOnce(
+            () -> wristController.setPID(newP,newI,newD)
+        );
+    }
+
+    public double[] getFeedForwardValues() {
+        return new double[] {
+            gravityCompensator.getKs(),
+            gravityCompensator.getKg(),
+            gravityCompensator.getKv()
+        };
+    }
+
+    public Command changeFeedForwardValues(double newS, double newG, double newV){
+        return runOnce(
+            () -> {
+                gravityCompensator.setKs(newS);
+                gravityCompensator.setKg(newG);
+                gravityCompensator.setKv(newV);
+            }
+        );
     }
 
     public Command turnWristUp() { // (debuging command) turns Wrist upwards

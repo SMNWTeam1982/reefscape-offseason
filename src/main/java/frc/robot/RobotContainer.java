@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -119,10 +120,33 @@ public class RobotContainer {
 
     private void configureOperatorBindings() {
 
-        operatorController.button(10).whileTrue(coralSubsystem.intakeEject());
+        
 
-        // driverController.a().whileTrue(algaeSubsystem.intake());
-        // driverController.b().whileTrue(algaeSubsystem.eject());
+        SmartDashboard.putNumber("wristS", wristSubsystem.getFeedForwardValues()[0]);
+        SmartDashboard.putNumber("wristG", wristSubsystem.getFeedForwardValues()[1]);
+        SmartDashboard.putNumber("wristV", wristSubsystem.getFeedForwardValues()[2]);
+
+        driverController.a().debounce(0.1).onTrue(
+            wristSubsystem.changeFeedForwardValues(
+                SmartDashboard.getNumber("wristS", 0), 
+                SmartDashboard.getNumber("wristG", 0), 
+                SmartDashboard.getNumber("wristV", 0)
+            )
+        );
+
+        SmartDashboard.putNumber("wristP", wristSubsystem.getPIDValues()[0]);
+        SmartDashboard.putNumber("wristI", wristSubsystem.getPIDValues()[1]);
+        SmartDashboard.putNumber("wristD", wristSubsystem.getPIDValues()[2]);
+
+        driverController.b().debounce(0.1).onTrue(
+            wristSubsystem.changePIDValues(
+                SmartDashboard.getNumber("wristP", 0), 
+                SmartDashboard.getNumber("wristI", 0), 
+                SmartDashboard.getNumber("wristD", 0)
+            )
+        );
+
+        operatorController.button(10).whileTrue(coralSubsystem.intakeEject());
 
         operatorController
                 .button(1)
