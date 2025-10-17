@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,6 +23,7 @@ import frc.robot.subsystems.Wrist.WristSubsystem;
 import frc.robot.subsystems.Wrist.WristSubsystem.WristConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
+import frc.robot.subsystems.swerve.ReefNavigation;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem.PhotonVisionConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -97,52 +97,28 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
                     return new ChassisSpeeds(
-                            deadZone(driverController.getRightX()) * 2 * 0.2,
-                            deadZone(driverController.getRightY()) * 2 * 0.2,
+                            deadZone(driverController.getRightX()) * 2 * 0.5,
+                            deadZone(driverController.getRightY()) * 2 * 0.5,
                             deadZone(driverController.getLeftX())
                                     * Math.PI
-                                    * 0.2); // -PI - PI radians per second (-180 - 180 degrees/sec)
+                                    * 0.5); // -PI - PI radians per second (-180 - 180 degrees/sec)
                 },
                 onBlueSide));
 
         driverController.rightBumper().whileTrue(climberSubsystem.moveClimberIn());
         driverController.leftBumper().whileTrue(climberSubsystem.moveClimberOut());
 
-        // driverController
-        //         .a() // automatically moves to the closest reef scoring pose
-        //         .debounce(0.01)
-        //         .whileTrue(driveSubsystem.moveToPose(
-        //                 ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
+        driverController
+                .a() // automatically moves to the closest reef scoring pose
+                .debounce(0.1)
+                .onFalse(driveSubsystem.moveToPose(
+                        ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
 
         // resets heading when button is released
-        // driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
+        driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
     }
 
     private void configureOperatorBindings() {
-
-        SmartDashboard.putNumber("wristS", wristSubsystem.getFeedForwardValues()[0]);
-        SmartDashboard.putNumber("wristG", wristSubsystem.getFeedForwardValues()[1]);
-        SmartDashboard.putNumber("wristV", wristSubsystem.getFeedForwardValues()[2]);
-
-        driverController
-                .a()
-                .debounce(0.1)
-                .onTrue(wristSubsystem.changeFeedForwardValues(
-                        SmartDashboard.getNumber("wristS", 0),
-                        SmartDashboard.getNumber("wristG", 0),
-                        SmartDashboard.getNumber("wristV", 0)));
-
-        SmartDashboard.putNumber("wristP", wristSubsystem.getPIDValues()[0]);
-        SmartDashboard.putNumber("wristI", wristSubsystem.getPIDValues()[1]);
-        SmartDashboard.putNumber("wristD", wristSubsystem.getPIDValues()[2]);
-
-        driverController
-                .b()
-                .debounce(0.1)
-                .onTrue(wristSubsystem.changePIDValues(
-                        SmartDashboard.getNumber("wristP", 0),
-                        SmartDashboard.getNumber("wristI", 0),
-                        SmartDashboard.getNumber("wristD", 0)));
 
         operatorController.button(10).whileTrue(coralSubsystem.intakeEject());
 
