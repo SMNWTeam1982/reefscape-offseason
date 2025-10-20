@@ -173,12 +173,8 @@ public class RobotContainer {
                 .button(6)
                 .onTrue(elevatorSubsystem.setL4().alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting()));
 
-        operatorController
-                .button(4)
-                .whileTrue(elevatorSubsystem.nudgeUp());
-        operatorController
-                .button(8)
-                .whileTrue(elevatorSubsystem.nudgeDown());
+        operatorController.button(4).whileTrue(elevatorSubsystem.nudgeUp());
+        operatorController.button(8).whileTrue(elevatorSubsystem.nudgeDown());
         operatorController
                 .button(11)
                 .onTrue(elevatorSubsystem
