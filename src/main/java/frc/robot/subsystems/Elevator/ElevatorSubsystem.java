@@ -159,6 +159,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         return setTargetHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT);
     }
 
+    public Command setLowAlgae() {
+        return setTargetHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT);
+    }
+    
+    public Command setHighAlgae() {
+        return setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT);
+    }
+
     public Command nudgeUp() {
         return setTargetHeight(altitudePidController.getSetpoint() + 0.005);
     }

@@ -154,25 +154,26 @@ public class RobotContainer {
 
     private void configureOperatorBindings() {
 
-        operatorController.button(10).whileTrue(coralSubsystem.intakeEject());
+        operatorController.button(10).whileTrue(coralSubsystem.intakeEject().alongWith(algaeSubsystem.intakeEject()));
 
         operatorController
                 .button(1)
                 .onTrue(elevatorSubsystem
                         .setStation()
                         .alongWith(wristSubsystem.setStation(), coralSubsystem.setIntaking()));
+
         operatorController
                 .button(2)
-                .onTrue(elevatorSubsystem.setL1().alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem.setL1().alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
         operatorController
                 .button(12)
-                .onTrue(elevatorSubsystem.setL2().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem.setL2().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
         operatorController
                 .button(5)
-                .onTrue(elevatorSubsystem.setL3().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem.setL3().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
         operatorController
                 .button(6)
-                .onTrue(elevatorSubsystem.setL4().alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem.setL4().alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
 
         operatorController.button(4).whileTrue(elevatorSubsystem.nudgeUp());
         operatorController.button(8).whileTrue(elevatorSubsystem.nudgeDown());
@@ -180,12 +181,15 @@ public class RobotContainer {
                 .button(11)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT)
-                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
+                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION))
+                        );
+
         operatorController
                 .button(7)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT)
-                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
+                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION))
+                        );
     }
 
     private double deadZone(double number) {
