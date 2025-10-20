@@ -52,7 +52,7 @@ public class RobotContainer {
 
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
-     private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
 
     private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -185,7 +185,9 @@ public class RobotContainer {
                 .button(7)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT)
-                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION), algaeSubsystem.setEjecting()));
+                        .alongWith(
+                                wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION),
+                                algaeSubsystem.setEjecting()));
     }
 
     private double deadZone(double number) {
