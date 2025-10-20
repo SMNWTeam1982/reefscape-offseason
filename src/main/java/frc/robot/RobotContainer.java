@@ -26,6 +26,7 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem.PhotonVisionConstants;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -94,6 +95,10 @@ public class RobotContainer {
             onBlueSide = alliance.get() == Alliance.Blue;
         }
 
+        Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
+        Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
+        Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
+
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
                     return new ChassisSpeeds(
@@ -107,6 +112,14 @@ public class RobotContainer {
 
         driverController.rightBumper().whileTrue(climberSubsystem.moveClimberIn());
         driverController.leftBumper().whileTrue(climberSubsystem.moveClimberOut());
+
+        driverController
+                .x()
+                .debounce(0.1)
+                .whileTrue(driveSubsystem.driveAndOrientTowardsReefSide(
+                        () -> deadZone(driverController.getLeftX()) * 2 * 0.5,
+                        () -> deadZone(driverController.getLeftY()) * 2 * 0.5,
+                        onBlueSide));
 
         driverController
                 .a() // automatically moves to the closest reef scoring pose

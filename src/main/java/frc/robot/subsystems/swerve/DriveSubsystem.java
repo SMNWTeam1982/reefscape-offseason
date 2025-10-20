@@ -47,7 +47,7 @@ import org.littletonrobotics.junction.Logger;
 /** Command-Based Drivetrain subsytem for Swerve Drive */
 public class DriveSubsystem extends SubsystemBase {
 
-    public static class DriveConstants {
+    public static final class DriveConstants {
         public static final double PHYSICAL_MAX_MPS = 3.8;
 
         public static final double ARTIFICIAL_MAX_MPS = 2.5;
@@ -59,9 +59,15 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
 
-        public static final Constraints TRANSLATION_CONSTRAINTS = new Constraints(1.0, 1.0);
+        public static final Constraints TRANSLATION_PID_CONSTRAINTS = new Constraints(1.0, 1.0);
+
+        public static final double AUTO_MAX_SPEED = 0.5; // mps
+
+        public static final double AUTO_TRANSLATION_TOLERANCE = 0.01; // 1cm
 
         public static final PIDConstants ROTATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
+
+        public static final Rotation2d AUTO_ROTATION_TOLERANCE = Rotation2d.fromDegrees(1);
 
         public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.2635, 0.2635);
         public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(0.2635, -0.2635);
@@ -124,16 +130,21 @@ public class DriveSubsystem extends SubsystemBase {
             DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kD,
-            DriveConstants.TRANSLATION_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTRAINTS);
+
     private final ProfiledPIDController yController = new ProfiledPIDController(
             DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kD,
-            DriveConstants.TRANSLATION_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTRAINTS);
 
     public DriveSubsystem(Supplier<VisionData> visionDataGetter, BooleanSupplier visionFreshnessGetter) {
         this.visionDataGetter = visionDataGetter;
         this.visionFreshnessGetter = visionFreshnessGetter;
+
+        headingController.setTolerance(DriveConstants.AUTO_ROTATION_TOLERANCE.getRadians());
+        xController.setTolerance(DriveConstants.AUTO_TRANSLATION_TOLERANCE);
+        yController.setTolerance(DriveConstants.AUTO_TRANSLATION_TOLERANCE);
 
         configurePathPlanner();
         configureSwerveDriveLogging();
@@ -216,6 +227,25 @@ public class DriveSubsystem extends SubsystemBase {
                 },
                 this // a reference to this subsystem
                 );
+    }
+
+    /**
+     * converts joystick inputs to field relative inputs so the robot moves relative to the drivers station it is viewed from
+     * @param joystickSpeeds a chassisSpeeds with x and y being feed from the joystick values, and the theta coming from any source (usually the other stick)
+     * @return
+     */
+    public ChassisSpeeds joystickSpeedsToFieldRelativeSpeeds(ChassisSpeeds joystickSpeeds, boolean onBlueSide) {
+        if (onBlueSide) {
+            return new ChassisSpeeds(
+                    -joystickSpeeds.vyMetersPerSecond,
+                    -joystickSpeeds.vxMetersPerSecond,
+                    joystickSpeeds.omegaRadiansPerSecond);
+        } else {
+            return new ChassisSpeeds(
+                    joystickSpeeds.vyMetersPerSecond,
+                    joystickSpeeds.vxMetersPerSecond,
+                    joystickSpeeds.omegaRadiansPerSecond);
+        }
     }
 
     /**
@@ -305,21 +335,38 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
+    /** the target rotation will only change when the command is started */
+    public Command driveAndOrientTowardsReefSide(
+            DoubleSupplier joystickXMPS, DoubleSupplier joystickYMPS, boolean onBlueSide) {
+        return defer(() -> {
+            Rotation2d targetRotation =
+                    ReefNavigation.getClosestScoringPose(getEstimatedPose()).getRotation();
+
+            return driveTopDown(
+                    () -> joystickSpeedsToFieldRelativeSpeeds(
+                            new ChassisSpeeds(joystickXMPS.getAsDouble(), joystickYMPS.getAsDouble(), 0), onBlueSide),
+                    () -> targetRotation);
+        });
+    }
+
     /**
      * drives the robot like a top-down shooter
      *
+     * @param desiredTranslation the theta component is ignored
+     *
      * <p>the x & y velocities and the field rotation are relative to the field coordinate system
      */
-    public Command driveTopDown(
-            DoubleSupplier xVelocityMPS, DoubleSupplier yVelocityMPS, Supplier<Rotation2d> desiredFieldRotation) {
+    public Command driveTopDown(Supplier<ChassisSpeeds> desiredTraslation, Supplier<Rotation2d> desiredFieldRotation) {
         return runEnd(
                 () -> {
                     double pidOutput = headingController.calculate(
                             getHeading().getRadians(),
                             desiredFieldRotation.get().getRadians());
 
+                    ChassisSpeeds translations = desiredTraslation.get();
+
                     ChassisSpeeds finalSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                            xVelocityMPS.getAsDouble(), yVelocityMPS.getAsDouble(), pidOutput, getHeading());
+                            translations.vxMetersPerSecond, translations.vyMetersPerSecond, pidOutput, getHeading());
 
                     setModulesFromRobotRelativeSpeeds(finalSpeeds);
                 },
@@ -336,14 +383,17 @@ public class DriveSubsystem extends SubsystemBase {
         return runOnce(() -> autoField.getObject("Target").setPose(targetPose))
                 .andThen(driveTopDown(
                                 () -> {
-                                    double output = xController.calculate(
+                                    double xOutput = xController.calculate(
                                             getEstimatedPose().getX(), targetPose.getX());
-                                    return MathUtil.clamp(output, -1, 1);
-                                },
-                                () -> {
-                                    double output = yController.calculate(
+                                    double clampedXOutput = MathUtil.clamp(
+                                            xOutput, -DriveConstants.AUTO_MAX_SPEED, DriveConstants.AUTO_MAX_SPEED);
+
+                                    double yOutput = yController.calculate(
                                             getEstimatedPose().getY(), targetPose.getY());
-                                    return MathUtil.clamp(output, -1, 1);
+                                    double clampedYOutput = MathUtil.clamp(
+                                            yOutput, -DriveConstants.AUTO_MAX_SPEED, DriveConstants.AUTO_MAX_SPEED);
+
+                                    return new ChassisSpeeds(clampedXOutput, clampedYOutput, 0);
                                 },
                                 () -> targetPose.getRotation())
                         .until(() -> xController.atGoal() && yController.atGoal()))
