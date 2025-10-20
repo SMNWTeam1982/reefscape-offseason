@@ -56,7 +56,4 @@ public class AlgaeSubsystem extends SubsystemBase {
     public Command stop() {
         return runOnce(() -> leadMotor.set(0));
     }
-
-
-    
 }
