@@ -17,16 +17,16 @@ public class AlgaeSubsystem extends SubsystemBase {
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
     }
 
-    private final SparkMax rightMotor = new SparkMax(14, SparkMax.MotorType.kBrushless); // initilizes lead motor
-    private final SparkMax leftMotor = new SparkMax(13, SparkMax.MotorType.kBrushless);
+    private final SparkMax leadMotor = new SparkMax(14, SparkMax.MotorType.kBrushless); // initilizes lead motor
+    private final SparkMax followingleadMotor = new SparkMax(13, SparkMax.MotorType.kBrushless);
 
     public AlgaeSubsystem() {
-        rightMotor.configure(
+        leadMotor.configure(
                 AlgaeConstants.ALGAE_MOTOR_CONFIG,
                 SparkBase.ResetMode.kResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);
 
-        leftMotor.configure(
+        followingleadMotor.configure(
                 AlgaeConstants.ALGAE_MOTOR_CONFIG.follow(14, true),
                 SparkBase.ResetMode.kResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);
@@ -34,26 +34,26 @@ public class AlgaeSubsystem extends SubsystemBase {
 
     /** starts the motor intaking and then sets it to stop when interupted */
     public Command intake() {
-        return startEnd(() -> rightMotor.set(AlgaeConstants.ALGAE_INTAKE_SPEED), () -> rightMotor.set(0));
+        return startEnd(() -> leadMotor.set(AlgaeConstants.ALGAE_INTAKE_SPEED), () -> followingleadMotor.set(0));
     }
 
     /** starts the motor ejecting and then sets it to stop when interupted */
     public Command eject() {
-        return startEnd(() -> rightMotor.set(AlgaeConstants.ALGAE_EJECT_SPEED), () -> rightMotor.set(0));
+        return startEnd(() -> leadMotor.set(AlgaeConstants.ALGAE_EJECT_SPEED), () -> followingleadMotor.set(0));
     }
 
     /** sets the intake motor to start intaking */
     public Command setIntaking() {
-        return runOnce(() -> rightMotor.set(AlgaeConstants.ALGAE_INTAKE_SPEED));
+        return runOnce(() -> leadMotor.set(AlgaeConstants.ALGAE_INTAKE_SPEED));
     }
 
     /** sets the intake motor to start ejecting */
     public Command setEjecting() {
-        return runOnce(() -> rightMotor.set(AlgaeConstants.ALGAE_EJECT_SPEED));
+        return runOnce(() -> leadMotor.set(AlgaeConstants.ALGAE_EJECT_SPEED));
     }
 
     /** sets the intake motor to 0 */
     public Command stop() {
-        return runOnce(() -> rightMotor.set(0));
+        return runOnce(() -> leadMotor.set(0));
     }
 }
