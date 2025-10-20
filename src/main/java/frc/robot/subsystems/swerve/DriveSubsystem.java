@@ -55,7 +55,7 @@ public class DriveSubsystem extends SubsystemBase {
         public static final double DRIVE_PERIOD = TimedRobot.kDefaultPeriod;
         public static final boolean GYRO_REVERSED = false;
 
-        public static final double NUDGE_SPEED = .1;
+        public static final double NUDGE_SPEED = .25;
 
         public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
 
