@@ -13,8 +13,6 @@ public class AlgaeSubsystem extends SubsystemBase {
         public static final double ALGAE_INTAKE_SPEED = 0.5;
         public static final double ALGAE_EJECT_SPEED = -0.5;
 
-        
-
         public static final SparkBaseConfig ALGAE_MOTOR_CONFIG =
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
     }
@@ -61,7 +59,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     //     return runOnce(() -> leadMotor.set(0));
     // }
 
-        /** either intakes or ejects based on if setIntaking or setEjecting was ran
+    /** either intakes or ejects based on if setIntaking or setEjecting was ran
      * <p> sets the motor to stop when interupted
      */
     public Command intakeEject() {
