@@ -159,6 +159,18 @@ public class ElevatorSubsystem extends SubsystemBase {
         return setTargetHeight(ElevatorConstants.LEVEL_4_TARGET_HEIGHT);
     }
 
+    public Command nudgeUp() {
+        return run(() -> {
+            altitudePidController.setSetpoint(altitudePidController.getSetpoint() + 0.005);
+        });
+    }
+
+    public Command nudgeDown() {
+        return run(() -> {
+            altitudePidController.setSetpoint(altitudePidController.getSetpoint() - 0.005);
+        });
+    }
+
     public Command stopMotors() {
         return runOnce(() -> {
             leadMotor.set(0);

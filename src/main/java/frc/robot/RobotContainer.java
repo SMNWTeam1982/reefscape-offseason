@@ -128,6 +128,27 @@ public class RobotContainer {
 
         // resets heading when button is released
         driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
+
+        driverController
+                .povDown()
+                .debounce(.01)
+                .whileTrue(driveSubsystem.nudgeBack())
+                .onFalse(driveSubsystem.stop());
+        driverController
+                .povUp()
+                .debounce(.01)
+                .whileTrue(driveSubsystem.nudgeForward())
+                .onFalse(driveSubsystem.stop());
+        driverController
+                .povLeft()
+                .debounce(.01)
+                .whileTrue(driveSubsystem.nudgeLeft())
+                .onFalse(driveSubsystem.stop());
+        driverController
+                .povRight()
+                .debounce(.01)
+                .whileTrue(driveSubsystem.nudgeRight())
+                .onFalse(driveSubsystem.stop());
     }
 
     private void configureOperatorBindings() {
@@ -152,6 +173,8 @@ public class RobotContainer {
                 .button(6)
                 .onTrue(elevatorSubsystem.setL4().alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting()));
 
+        operatorController.button(4).whileTrue(elevatorSubsystem.nudgeUp());
+        operatorController.button(8).whileTrue(elevatorSubsystem.nudgeDown());
         operatorController
                 .button(11)
                 .onTrue(elevatorSubsystem
