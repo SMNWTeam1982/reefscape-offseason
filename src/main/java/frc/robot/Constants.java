@@ -13,6 +13,27 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static class DriveCANIDs {
+        public static final int BR_TURN = 0;
+        public static final int BR_DRIVE = 0;
+        public static final int BR_ENCODER = 0;
+
+        public static final int BL_TURN = 0;
+        public static final int BL_DRIVE = 0;
+        public static final int BL_ENCODER = 0;
+
+        public static final int FR_TURN = 0;
+        public static final int FR_DRIVE = 0;
+        public static final int FR_ENCODER = 0;
+
+        public static final int FL_TURN = 0;
+        public static final int FL_DRIVE = 0;
+        public static final int FL_ENCODER = 0;
+
+        public static final int GYRO_DEVICE = 0;
+    }
+
     // Set this to Mode.REPLAY for AdvantageKit Replay
     public static final Mode simMode = Mode.REAL;
 
@@ -21,8 +42,8 @@ public final class Constants {
         public static final String PROJECT_NAME = "Swerve Template";
         public static final int DRIVER_CONTROLLER_PORT = 0;
         public static final int OPERATOR_CONTROLLER_PORT = 1;
-        public static final boolean ENABLE_QUESTNAV = false;
-        public static final boolean ENABLE_PHOTONLIB = false;
+        // public static final boolean ENABLE_QUESTNAV = false;
+        // public static final boolean ENABLE_PHOTONLIB = false;
         public static final boolean REPLAY_LOGS = false;
     }
 

@@ -10,7 +10,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,14 +20,14 @@ public class WristSubsystem extends SubsystemBase {
 
     public static class WristConstants {
         public static final Rotation2d LEVEL_1_POSITION = Rotation2d.fromDegrees(0);
-        public static final Rotation2d LEVEL_MID_POSITION = Rotation2d.fromDegrees(-15);
-        public static final Rotation2d LEVEL_4_POSITION = Rotation2d.fromDegrees(0);
+        public static final Rotation2d LEVEL_MID_POSITION = Rotation2d.fromDegrees(-20);
+        public static final Rotation2d LEVEL_4_POSITION =
+                Rotation2d.fromDegrees(5); // add a little up movement to encourage the pid to be flat
         public static final Rotation2d INTAKE_POSITION = Rotation2d.fromDegrees(35);
         public static final Rotation2d STOW_POSITION = Rotation2d.fromDegrees(60);
 
         public static final Rotation2d STARTING_POSITION = Rotation2d.fromDegrees(72); // measured value
-        public static final Rotation2d LOWEST_POSITION =
-                Rotation2d.fromDegrees(-30); // this number is yet to be measured
+        public static final Rotation2d LOWEST_POSITION = Rotation2d.fromDegrees(-100);
 
         public static final double WRIST_ENCODER_ROTATIONS_TO_DEGREES_MULTIPLIER = 72 / -5.2857;
         public static final double WRIST_POSITION_OFFSET = 72;
@@ -53,19 +53,19 @@ public class WristSubsystem extends SubsystemBase {
 
         public static final int WRIST_PDP_CHANNEL = 12;
 
-        public static final double WRIST_STATIC_GAIN = 0.01;
-        public static final double WRIST_GRAVITY_GAIN = .1;
-        public static final double WRIST_VELOCITY_GAIN = 0.0;
+        public static final double WRIST_STATIC_GAIN = 0.1; // 0.01;
+        public static final double WRIST_GRAVITY_GAIN = 0.5; // .1;
+        public static final double WRIST_VELOCITY_GAIN = 0; // 0.0;
 
         // PID values from Python code
-        public static final double WRIST_PROPORTIONAL_GAIN = 8;
-        public static final double WRIST_INTEGRAL_GAIN = 0.1;
-        public static final double WRIST_DERIVATIVE_GAIN = 0.2;
+        public static final double WRIST_PROPORTIONAL_GAIN = 5; // 8;
+        public static final double WRIST_INTEGRAL_GAIN = 0; // 0.1;
+        public static final double WRIST_DERIVATIVE_GAIN = 0; // 0.2;
 
-        public static final double WRIST_PID_TOLERANCE = Units.degreesToRadians(3);
+        public static final double WRIST_PID_TOLERANCE = 0.01;
 
-        public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 4;
-        public static final double WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI;
+        public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 2;
+        public static final double WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI / 4;
 
         public static final SparkBaseConfig PIVOT_MOTOR_CONFIG =
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
@@ -126,8 +126,7 @@ public class WristSubsystem extends SubsystemBase {
                     double wristPositionRadians = getWristPosition().getRadians();
 
                     // a safety mechanism in case the wrist breaks and the encoder goes out of bounds
-                    if (wristPositionRadians > WristConstants.STARTING_POSITION.getRadians()
-                            || wristPositionRadians < WristConstants.LOWEST_POSITION.getRadians()) {
+                    if (wristPositionRadians > Math.PI || wristPositionRadians < -Math.PI) {
                         pivotMotor.set(0);
                         return;
                     }
@@ -138,11 +137,45 @@ public class WristSubsystem extends SubsystemBase {
                     double feedForwardOutput = gravityCompensator.calculate(
                             wristController.getSetpoint().position, wristController.getSetpoint().velocity);
 
-                    double outputVoltage = MathUtil.clamp(feedForwardOutput + pidOutput * 0, -12, 12);
+                    double outputVoltage = MathUtil.clamp(feedForwardOutput + pidOutput, -12, 12);
+
+                    Logger.recordOutput("wrist voltage output", -outputVoltage);
 
                     pivotMotor.setVoltage(-outputVoltage);
                 },
                 () -> pivotMotor.set(0));
+    }
+
+    public Command logTuningConstants() {
+        return runOnce(() -> {
+            SmartDashboard.putNumber("wristS", getFeedForwardValues()[0]);
+            SmartDashboard.putNumber("wristG", getFeedForwardValues()[1]);
+            SmartDashboard.putNumber("wristV", getFeedForwardValues()[2]);
+
+            SmartDashboard.putNumber("wristP", getPIDValues()[0]);
+            SmartDashboard.putNumber("wristI", getPIDValues()[1]);
+            SmartDashboard.putNumber("wristD", getPIDValues()[2]);
+        });
+    }
+
+    public double[] getPIDValues() {
+        return new double[] {wristController.getP(), wristController.getI(), wristController.getD()};
+    }
+
+    public Command changePIDValues(double newP, double newI, double newD) {
+        return runOnce(() -> wristController.setPID(newP, newI, newD));
+    }
+
+    public double[] getFeedForwardValues() {
+        return new double[] {gravityCompensator.getKs(), gravityCompensator.getKg(), gravityCompensator.getKv()};
+    }
+
+    public Command changeFeedForwardValues(double newS, double newG, double newV) {
+        return runOnce(() -> {
+            gravityCompensator.setKs(newS);
+            gravityCompensator.setKg(newG);
+            gravityCompensator.setKv(newV);
+        });
     }
 
     public Command turnWristUp() { // (debuging command) turns Wrist upwards

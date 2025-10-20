@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Autos.AutonomousCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
@@ -96,33 +97,29 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
                     return new ChassisSpeeds(
-                            deadZone(driverController.getRightX()) * 2 * 0.2,
-                            deadZone(driverController.getRightY()) * 2 * 0.2,
-                            deadZone(driverController.getLeftX())
+                            deadZone(driverController.getLeftX()) * 2 * 0.5,
+                            deadZone(driverController.getLeftY()) * 2 * 0.5,
+                            deadZone(driverController.getRightX())
                                     * Math.PI
-                                    * 0.2); // -PI - PI radians per second (-180 - 180 degrees/sec)
+                                    * 0.5); // -PI - PI radians per second (-180 - 180 degrees/sec)
                 },
                 onBlueSide));
 
         driverController.rightBumper().whileTrue(climberSubsystem.moveClimberIn());
         driverController.leftBumper().whileTrue(climberSubsystem.moveClimberOut());
 
-        // driverController
-        //         .a() // automatically moves to the closest reef scoring pose
-        //         .debounce(0.01)
-        //         .whileTrue(driveSubsystem.moveToPose(
-        //                 ReefNavigation.getClosestScoringPose(driveSubsystem.getEstimatedPose())));
+        driverController
+                .a() // automatically moves to the closest reef scoring pose
+                .debounce(0.1)
+                .whileTrue(AutonomousCommands.navigateToNearestScoringPose(driveSubsystem));
 
         // resets heading when button is released
-        // driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
+        driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
     }
 
     private void configureOperatorBindings() {
 
         operatorController.button(10).whileTrue(coralSubsystem.intakeEject());
-
-        // driverController.a().whileTrue(algaeSubsystem.intake());
-        // driverController.b().whileTrue(algaeSubsystem.eject());
 
         operatorController
                 .button(1)

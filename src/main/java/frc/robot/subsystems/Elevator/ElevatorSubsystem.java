@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SubsystemBase {
     public static class ElevatorConstants {
@@ -167,6 +168,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
+        Logger.recordOutput("elevator pos", getElevatorHeight());
+        Logger.recordOutput("elevator target", altitudePidController.getSetpoint());
+        Logger.recordOutput("elevator error", altitudePidController.getError());
+        Logger.recordOutput("elevator current output", leadMotor.getOutputCurrent());
     }
 }
