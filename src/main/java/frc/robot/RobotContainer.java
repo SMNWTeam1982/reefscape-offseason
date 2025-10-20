@@ -164,16 +164,30 @@ public class RobotContainer {
 
         operatorController
                 .button(2)
-                .onTrue(elevatorSubsystem.setL1().alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL1()
+                        .alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
         operatorController
                 .button(12)
-                .onTrue(elevatorSubsystem.setL2().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL2()
+                        .alongWith(
+                                wristSubsystem.setL2and3(),
+                                coralSubsystem.setEjecting(),
+                                algaeSubsystem.setEjecting()));
         operatorController
                 .button(5)
-                .onTrue(elevatorSubsystem.setL3().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL3()
+                        .alongWith(
+                                wristSubsystem.setL2and3(),
+                                coralSubsystem.setEjecting(),
+                                algaeSubsystem.setEjecting()));
         operatorController
                 .button(6)
-                .onTrue(elevatorSubsystem.setL4().alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL4()
+                        .alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
 
         operatorController.button(4).whileTrue(elevatorSubsystem.nudgeUp());
         operatorController.button(8).whileTrue(elevatorSubsystem.nudgeDown());
@@ -181,8 +195,7 @@ public class RobotContainer {
                 .button(11)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT)
-                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION))
-                        );
+                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
 
         operatorController
                 .button(7)
