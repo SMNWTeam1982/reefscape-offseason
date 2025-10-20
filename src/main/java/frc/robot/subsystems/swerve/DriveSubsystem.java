@@ -162,6 +162,10 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         logRobotPose(getEstimatedPose());
+
+        Logger.recordOutput("position x error", xController.getPositionError());
+        Logger.recordOutput("position y error", yController.getPositionError());
+        Logger.recordOutput("rotation error", headingController.getError());
     }
 
     /** puts information about about the swerve drive onto the dashboard */
