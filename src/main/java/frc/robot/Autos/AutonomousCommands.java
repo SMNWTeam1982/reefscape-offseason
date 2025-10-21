@@ -37,7 +37,7 @@ public final class AutonomousCommands {
     }
     public static Command scoreL3(
         DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
-        return navigateToNearestScoringPose(drive)
+        return navigateToNearestScoringPose(drive) 
                 .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT) // Moves elevator to L3 Pos
                         .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))) // Moves wrist to mid angle 
                 .until(elevator.atTargetHeight.and(wrist.atTargetAngle)) // Waits until the wrist and elevaotr are at the required pos
