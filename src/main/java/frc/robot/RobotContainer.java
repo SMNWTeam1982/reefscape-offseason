@@ -4,16 +4,11 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -66,7 +61,9 @@ public class RobotContainer {
     @SuppressWarnings("unused")
     public RobotContainer() {
         autoChooser = new LoggedDashboardChooser<>("Selected Auto Routine");
-        autoChooser.addOption("nearest L2", AutonomousCommands.scoreNearestL2(driveSubsystem,elevatorSubsystem,wristSubsystem,coralSubsystem));
+        autoChooser.addOption(
+                "nearest L2",
+                AutonomousCommands.scoreNearestL2(driveSubsystem, elevatorSubsystem, wristSubsystem, coralSubsystem));
         autoChooser.addDefaultOption("nothing", Commands.none());
 
         // Configure the trigger bindings
