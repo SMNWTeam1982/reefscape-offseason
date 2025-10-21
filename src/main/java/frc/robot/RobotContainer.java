@@ -61,7 +61,9 @@ public class RobotContainer {
     @SuppressWarnings("unused")
     public RobotContainer() {
         autoChooser = new LoggedDashboardChooser<>("Selected Auto Routine");
-        autoChooser.addOption("nearest L2", AutonomousCommands.scoreNearestL2(driveSubsystem,elevatorSubsystem,wristSubsystem,coralSubsystem));
+        autoChooser.addOption(
+                "nearest L2",
+                AutonomousCommands.scoreNearestL2(driveSubsystem, elevatorSubsystem, wristSubsystem, coralSubsystem));
         autoChooser.addDefaultOption("nothing", Commands.none());
 
         // Configure the trigger bindings
