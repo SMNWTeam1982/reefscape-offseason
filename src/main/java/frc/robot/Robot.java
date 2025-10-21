@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.OperatorConstants;
@@ -27,6 +28,8 @@ public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
 
     private final RobotContainer m_robotContainer;
+
+    private final PowerDistribution pdp = new PowerDistribution();
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -84,6 +87,9 @@ public class Robot extends LoggedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+
+        Logger.recordOutput("pdp voltage", pdp.getVoltage());
+        Logger.recordOutput("pdp voltage nominal", pdp.getVoltage() >= 7.0);
     }
 
     /** This function is called once each time the robot enters Disabled mode. */

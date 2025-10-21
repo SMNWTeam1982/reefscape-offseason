@@ -88,7 +88,7 @@ public class WristSubsystem extends SubsystemBase {
                     WristConstants.WRIST_MAX_VELOCITY_RADIANS_PER_SECOND,
                     WristConstants.WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED));
 
-    public final Trigger atTargetAngle = new Trigger(() -> wristController.atSetpoint());
+    public final Trigger atTargetAngle = new Trigger(() -> wristController.atGoal());
 
     public WristSubsystem() {
         pivotMotor.configure(
@@ -109,6 +109,7 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("wrist temperature", pivotMotor.getMotorTemperature());
 
         Logger.recordOutput("wrist temperature status", pivotMotor.getMotorTemperature() > 40);
+        Logger.recordOutput("wrist at target", atTargetAngle.getAsBoolean());
 
         Logger.recordOutput("wrist pos radians", getWristPosition().getRadians());
         Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);

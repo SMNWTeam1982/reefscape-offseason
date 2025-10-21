@@ -189,7 +189,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
+        Logger.recordOutput("elevator at target", atTargetHeight.getAsBoolean());
+
         Logger.recordOutput("elevator pos", getElevatorHeight());
         Logger.recordOutput("elevator target", altitudePidController.getSetpoint());
         Logger.recordOutput("elevator error", altitudePidController.getError());
