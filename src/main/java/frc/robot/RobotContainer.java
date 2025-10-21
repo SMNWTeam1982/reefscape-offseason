@@ -4,16 +4,11 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -191,20 +186,25 @@ public class RobotContainer {
                                 algaeSubsystem.setEjecting()));
         operatorController
                 .button(6)
+                .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setL4()
                         .alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
 
-        operatorController.button(4).whileTrue(elevatorSubsystem.nudgeUp());
-        operatorController.button(8).whileTrue(elevatorSubsystem.nudgeDown());
+        // nudges the elevator target a little when pressed
+        operatorController.button(4).debounce(0.05).onTrue(elevatorSubsystem.nudgeUp());
+        operatorController.button(8).debounce(0.05).onTrue(elevatorSubsystem.nudgeDown());
+
         operatorController
                 .button(11)
+                .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT)
                         .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
 
         operatorController
                 .button(7)
+                .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT)
                         .alongWith(

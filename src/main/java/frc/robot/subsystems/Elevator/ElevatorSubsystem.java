@@ -27,6 +27,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         public static final double IDLE_TARGET_HEIGHT = 0.6;
 
+        public static final double ELEVATOR_NUDGE_AMOUNT = 0.01; // 1 cm
+
         // using the python code base pid values.
         public static final double ALTITUDE_PROPORTIONAL_GAIN = 5;
         public static final double ALTITUDE_INTERGRAL_GAIN = 0;
@@ -106,6 +108,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 () -> leadMotor.set(0));
     }
 
+    /** sets the target height, this is a runOnce */
     public Command setTargetHeight(double targetHeight) {
         return runOnce(() -> {
             altitudePidController.setSetpoint(targetHeight);
@@ -165,16 +168,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public Command setHighAlgae() {
         return setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT);
-    }
+    }  
 
+    /** this is a runOnce */
     public Command nudgeUp() {
-        return setTargetHeight(altitudePidController.getSetpoint() + 0.005);
+        return setTargetHeight(altitudePidController.getSetpoint() + ElevatorConstants.ELEVATOR_NUDGE_AMOUNT);
     }
 
+    /** this is a runOnce */
     public Command nudgeDown() {
-        return setTargetHeight(altitudePidController.getSetpoint() - 0.005);
+        return setTargetHeight(altitudePidController.getSetpoint() - ElevatorConstants.ELEVATOR_NUDGE_AMOUNT);
     }
 
+    /** this is a runOnce */
     public Command stopMotors() {
         return runOnce(() -> {
             leadMotor.set(0);
