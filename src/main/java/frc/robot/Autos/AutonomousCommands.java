@@ -61,4 +61,11 @@ public final class AutonomousCommands {
                         .withTimeout(1))
                 .andThen(elevator.setIdle(), wrist.setIdle());
     }
+
+    public static command stationtocoral(
+            DriveSubsystem drive){
+        return navigateToNearestScoringPose(drive);
+                }
+
+
 }
