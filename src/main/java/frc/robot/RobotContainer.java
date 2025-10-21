@@ -160,18 +160,18 @@ public class RobotContainer {
         operatorController.button(10).whileTrue(coralSubsystem.intakeEject().alongWith(algaeSubsystem.intakeEject()));
 
         operatorController
-                .button(1)
+                .button(1) //  Turns wrist to station pos and intakes coral 
                 .onTrue(elevatorSubsystem
                         .setStation()
                         .alongWith(wristSubsystem.setStation(), coralSubsystem.setIntaking()));
 
         operatorController
-                .button(2)
+                .button(2) // Moves to L1 Pos
                 .onTrue(elevatorSubsystem
                         .setL1()
                         .alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
         operatorController
-                .button(12)
+                .button(12) // Moves to L2 Pos
                 .onTrue(elevatorSubsystem
                         .setL2()
                         .alongWith(
@@ -179,7 +179,7 @@ public class RobotContainer {
                                 coralSubsystem.setEjecting(),
                                 algaeSubsystem.setEjecting()));
         operatorController
-                .button(5)
+                .button(5) // Moves to L3 Pos
                 .onTrue(elevatorSubsystem
                         .setL3()
                         .alongWith(
@@ -187,7 +187,7 @@ public class RobotContainer {
                                 coralSubsystem.setEjecting(),
                                 algaeSubsystem.setEjecting()));
         operatorController
-                .button(6)
+                .button(6) // Moves to L4 Pos 
                 .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setL4()
@@ -205,7 +205,7 @@ public class RobotContainer {
                         .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
 
         operatorController
-                .button(7)
+                .button(7) // Moves to Low Algea Pos 
                 .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT)
