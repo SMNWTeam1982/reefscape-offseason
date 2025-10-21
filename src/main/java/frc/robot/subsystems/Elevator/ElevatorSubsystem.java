@@ -168,7 +168,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public Command setHighAlgae() {
         return setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT);
-    }  
+    }
 
     /** this is a runOnce */
     public Command nudgeUp() {
