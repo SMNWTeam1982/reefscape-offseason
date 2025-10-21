@@ -161,8 +161,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         logRobotPose(getEstimatedPose());
 
-        Logger.recordOutput("position x error", xController.getPositionError());
-        Logger.recordOutput("position y error", yController.getPositionError());
+        Logger.recordOutput("position x error", xController.getError());
+        Logger.recordOutput("position y error", yController.getError());
         Logger.recordOutput("rotation error", headingController.getError());
     }
 
@@ -343,6 +343,20 @@ public class DriveSubsystem extends SubsystemBase {
         return defer(() -> {
             Rotation2d targetRotation =
                     ReefNavigation.getClosestScoringPose(getEstimatedPose()).getRotation();
+
+            return driveTopDown(
+                    () -> joystickSpeedsToFieldRelativeSpeeds(
+                            new ChassisSpeeds(joystickXMPS.getAsDouble(), joystickYMPS.getAsDouble(), 0), onBlueSide),
+                    () -> targetRotation);
+        });
+    }
+
+    /** the target rotation will only change when the command is started */
+    public Command driveAndOrientTowardsStationSide(
+            DoubleSupplier joystickXMPS, DoubleSupplier joystickYMPS, boolean onBlueSide) {
+        return defer(() -> {
+            Rotation2d targetRotation = ReefNavigation.getNearestStationRotation(
+                    getEstimatedPose()); // gets the station rotation instead of reef rotation
 
             return driveTopDown(
                     () -> joystickSpeedsToFieldRelativeSpeeds(

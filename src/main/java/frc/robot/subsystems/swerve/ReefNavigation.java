@@ -90,6 +90,11 @@ public final class ReefNavigation {
         getRightBranchScoringPose(22),
     };
 
+    /** the poses of the station tags */
+    public static final Pose2d[] STATION_TAG_POSITIONS = new Pose2d[] {
+        getTagPose(1), getTagPose(2), getTagPose(12), getTagPose(13),
+    };
+
     /** puts a Field2d object onto the SmartDashboard that contains the REEF_SCORING_POSES */
     public static void displayScoringPoses() {
         Field2d field = new Field2d();
@@ -108,8 +113,9 @@ public final class ReefNavigation {
     public static Pose2d getRightBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Pose2d rightBranchTarget =
-                tagPose.transformBy(new Transform2d(RIGHT_SCORING_VECTOR, new Rotation2d(/*Math.PI*/ )));
+        Pose2d rightBranchTarget = tagPose.transformBy(new Transform2d(
+                RIGHT_SCORING_VECTOR,
+                new Rotation2d(/*Math.PI*/ ))); // the robot rotation is bugged rn so we dont flip 180deg
 
         return rightBranchTarget;
     }
@@ -141,11 +147,18 @@ public final class ReefNavigation {
         return robotPose.nearest(Arrays.asList(Arrays.copyOfRange(REEF_SCORING_POSES, 12, 23)));
     }
 
-    public static Pose2d getNearestLeft(Pose2d robotPose) {
-        return robotPose.nearest(Arrays.asList(ReefNavigation.LEFT_SCORING_POSES));
+    /** pulls from ALL of the LEFT scoring poses */
+    public static Pose2d getNearestLeftBranchScoringPose(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(LEFT_SCORING_POSES));
     }
 
-    public static Pose2d getNearestRight(Pose2d robotPose) {
-        return robotPose.nearest(Arrays.asList(ReefNavigation.RIGHT_SCORING_POSES));
+    /** pulls from ALL of the RIGHT scoring poses */
+    public static Pose2d getNearestRightBranchScoringPose(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(RIGHT_SCORING_POSES));
+    }
+
+    /** useful for snapping robot rotation to the station */
+    public static Rotation2d getNearestStationRotation(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(STATION_TAG_POSITIONS)).getRotation();
     }
 }

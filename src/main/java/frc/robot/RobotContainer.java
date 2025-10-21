@@ -12,6 +12,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -63,15 +65,10 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     @SuppressWarnings("unused")
     public RobotContainer() {
-        Command testAuto = AutoBuilder.pathfindToPose(
-                new Pose2d(5.0, 5.0, new Rotation2d()),
-                new PathConstraints(
-                        0.5,
-                        0.5,
-                        Math.PI / 2.0, // quarter rotation per second
-                        Math.PI / 2.0));
-        autoChooser = new LoggedDashboardChooser<>("Selected Auto Routine", AutoBuilder.buildAutoChooser());
-        autoChooser.addOption("testAuto", testAuto);
+        autoChooser = new LoggedDashboardChooser<>("Selected Auto Routine");
+        autoChooser.addOption("nearest L2", AutonomousCommands.scoreNearestL2(driveSubsystem,elevatorSubsystem,wristSubsystem,coralSubsystem));
+        autoChooser.addDefaultOption("nothing", Commands.none());
+
         // Configure the trigger bindings
         configureDriverBindings();
         configureOperatorBindings();
@@ -119,15 +116,25 @@ public class RobotContainer {
                 .whileTrue(driveSubsystem.driveAndOrientTowardsReefSide(
                         () -> deadZone(driverController.getLeftX()) * 2 * 0.5,
                         () -> deadZone(driverController.getLeftY()) * 2 * 0.5,
-                        onBlueSide));
+                        onBlueSide)); // snaps rotation to the nearest reef side while retaining the ability to move
 
         driverController
-                .a() // automatically moves to the closest reef scoring pose
+                .y()
                 .debounce(0.1)
-                .whileTrue(AutonomousCommands.navigateToNearestScoringPose(driveSubsystem));
+                .whileTrue(driveSubsystem.driveAndOrientTowardsStationSide(
+                        () -> deadZone(driverController.getLeftX()) * 2 * 0.5,
+                        () -> deadZone(driverController.getLeftY()) * 2 * 0.5,
+                        onBlueSide)); // snaps the rotation to the nearest station while retaining the ability to move
 
-        // resets heading when button is released
-        driverController.y().debounce(0.01).onFalse(driveSubsystem.zeroEstimatedHeading(visionSubsystem));
+        driverController
+                .a() // automatically moves to the closest LEFT reef scoring pose
+                .debounce(0.1)
+                .whileTrue(AutonomousCommands.navigateToNearestLeftBranchScoringPose(driveSubsystem));
+
+        driverController
+                .b() // automatically moves to the closest RIGHT reef scoring pose
+                .debounce(0.1)
+                .whileTrue(AutonomousCommands.navigateToNearestRightBranchScoringPose(driveSubsystem));
 
         driverController
                 .povDown()
@@ -218,6 +225,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return null; // autoChooser.get();
+        return autoChooser.get();
     }
 }

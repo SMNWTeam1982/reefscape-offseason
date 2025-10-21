@@ -18,7 +18,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     }
 
     private final SparkMax leadMotor = new SparkMax(14, SparkMax.MotorType.kBrushless); // initilizes lead motor
-    private final SparkMax followingleadMotor = new SparkMax(13, SparkMax.MotorType.kBrushless);
+    private final SparkMax followingMotor = new SparkMax(13, SparkMax.MotorType.kBrushless);
 
     private boolean intaking = true;
 
@@ -28,7 +28,7 @@ public class AlgaeSubsystem extends SubsystemBase {
                 SparkBase.ResetMode.kResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);
 
-        followingleadMotor.configure(
+        followingMotor.configure(
                 AlgaeConstants.ALGAE_MOTOR_CONFIG.follow(14, true),
                 SparkBase.ResetMode.kResetSafeParameters,
                 SparkBase.PersistMode.kPersistParameters);

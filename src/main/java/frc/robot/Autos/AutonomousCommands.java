@@ -20,6 +20,26 @@ public final class AutonomousCommands {
     }
 
     /**
+     * creates a new moveToPose command with a new target every time this command is ititialized
+     * <p> the target pose wont change while the command is running but will change on init
+     * <p> this version of this command limits the targets to the right poses
+     */
+    public static Command navigateToNearestRightBranchScoringPose(DriveSubsystem drive) {
+        return drive.defer(
+                () -> drive.moveToPose(ReefNavigation.getNearestRightBranchScoringPose(drive.getEstimatedPose())));
+    }
+
+    /**
+     * creates a new moveToPose command with a new target every time this command is ititialized
+     * <p> the target pose wont change while the command is running but will change on init
+     * <p> this version of this command limits the targets to the left poses
+     */
+    public static Command navigateToNearestLeftBranchScoringPose(DriveSubsystem drive) {
+        return drive.defer(
+                () -> drive.moveToPose(ReefNavigation.getNearestLeftBranchScoringPose(drive.getEstimatedPose())));
+    }
+
+    /**
      * this command requires the drive subsystem and the elevator subsystem, meaning their default
      * commands will be cancelled
      */
