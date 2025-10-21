@@ -50,15 +50,17 @@ public final class AutonomousCommands {
     }
 
     public static Command scoreNearestL3(
-        DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
-        return navigateToNearestScoringPose(drive) 
+            DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
+        return navigateToNearestScoringPose(drive)
                 .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT) // Moves elevator to L3 Pos
-                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))) // Moves wrist to mid angle 
-                .until(elevator.atTargetHeight.and(wrist.atTargetAngle)) // Waits until the wrist and elevaotr are at the required pos
-                .andThen(intake.eject() // ejects coral
-                        .alongWith(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT)) 
-                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))
-                        .withTimeout(1)) // ^ Holds height/angle for 1 second ^
-                .andThen(elevator.setIdle(), wrist.setIdle()); // returns to idle position        
-        }
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))) // Moves wrist to mid angle
+                .until(elevator.atTargetHeight.and(
+                        wrist.atTargetAngle)) // Waits until the wrist and elevaotr are at the required pos
+                .andThen(
+                        intake.eject() // ejects coral
+                                .alongWith(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT))
+                                .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))
+                                .withTimeout(1)) // ^ Holds height/angle for 1 second ^
+                .andThen(elevator.setIdle(), wrist.setIdle()); // returns to idle position
+    }
 }
