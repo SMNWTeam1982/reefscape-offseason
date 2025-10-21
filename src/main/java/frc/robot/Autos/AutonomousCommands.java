@@ -23,6 +23,19 @@ public final class AutonomousCommands {
      * this command requires the drive subsystem and the elevator subsystem, meaning their default
      * commands will be cancelled
      */
+    public static Command scoreNearestL1(
+            DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
+        return navigateToNearestScoringPose(drive)
+                .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT)
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_1_POSITION)))
+                .until(elevator.atTargetHeight.and(wrist.atTargetAngle))
+                .andThen(intake.eject()
+                        .alongWith(elevator.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT))
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_1_POSITION))
+                        .withTimeout(1))
+                .andThen(elevator.setIdle(), wrist.setIdle());
+    }
+
     public static Command scoreNearestL2(
             DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
         return navigateToNearestScoringPose(drive)
@@ -35,7 +48,8 @@ public final class AutonomousCommands {
                         .withTimeout(1))
                 .andThen(elevator.setIdle(), wrist.setIdle());
     }
-    public static Command scoreL3(
+
+    public static Command scoreNearestL3(
         DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
         return navigateToNearestScoringPose(drive) 
                 .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT) // Moves elevator to L3 Pos
