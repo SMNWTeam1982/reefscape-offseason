@@ -60,6 +60,36 @@ public final class ReefNavigation {
         getRightBranchScoringPose(11),
     };
 
+    public static final Pose2d[] LEFT_SCORING_POSES = new Pose2d[] {
+        getLeftBranchScoringPose(6),
+        getLeftBranchScoringPose(7),
+        getLeftBranchScoringPose(8),
+        getLeftBranchScoringPose(9),
+        getLeftBranchScoringPose(10),
+        getLeftBranchScoringPose(11),
+        getLeftBranchScoringPose(17),
+        getLeftBranchScoringPose(18),
+        getLeftBranchScoringPose(19),
+        getLeftBranchScoringPose(20),
+        getLeftBranchScoringPose(21),
+        getLeftBranchScoringPose(22),
+    };
+
+    public static final Pose2d[] RIGHT_SCORING_POSES = new Pose2d[] {
+        getRightBranchScoringPose(6),
+        getRightBranchScoringPose(7),
+        getRightBranchScoringPose(8),
+        getRightBranchScoringPose(9),
+        getRightBranchScoringPose(10),
+        getRightBranchScoringPose(11),
+        getRightBranchScoringPose(17),
+        getRightBranchScoringPose(18),
+        getRightBranchScoringPose(19),
+        getRightBranchScoringPose(20),
+        getRightBranchScoringPose(21),
+        getRightBranchScoringPose(22),
+    };
+
     /** puts a Field2d object onto the SmartDashboard that contains the REEF_SCORING_POSES */
     public static void displayScoringPoses() {
         Field2d field = new Field2d();
@@ -107,5 +137,13 @@ public final class ReefNavigation {
     /** the second half of the REEF_SCORING_POSES are the red poses */
     public static Pose2d getClosestRedScoringPose(Pose2d robotPose) {
         return robotPose.nearest(Arrays.asList(Arrays.copyOfRange(REEF_SCORING_POSES, 12, 23)));
+    }
+
+    public static Pose2d getNearestLeft(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(ReefNavigation.LEFT_SCORING_POSES));
+    }
+
+    public static Pose2d getNearestRight(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(ReefNavigation.RIGHT_SCORING_POSES));
     }
 }
