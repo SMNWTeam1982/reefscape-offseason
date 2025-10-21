@@ -505,16 +505,16 @@ public class DriveSubsystem extends SubsystemBase {
         };
     }
 
-    private double getTotalDriveMotorCurrentDraw(){
+    private double getTotalDriveMotorCurrentDraw() {
         double totalCurrent = 0.0;
-        for (double outputCurrent : getModuleDriveCurrents()){
+        for (double outputCurrent : getModuleDriveCurrents()) {
             totalCurrent += outputCurrent;
         }
 
         return totalCurrent;
     }
 
-    private double getAverageDriveMotorCurrentDraw(){
+    private double getAverageDriveMotorCurrentDraw() {
         return getTotalDriveMotorCurrentDraw() / 4;
     }
 

@@ -176,7 +176,7 @@ public class SwerveModule {
                 Rotation2d.fromRotations(turnEncoder.getPosition().getValueAsDouble()));
     }
 
-    /** 
+    /**
      * @return the output current of the drive motor in amps,
      * <p> this is data from the motor controller NOT the PDP
      */
