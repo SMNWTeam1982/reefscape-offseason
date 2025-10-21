@@ -35,4 +35,16 @@ public final class AutonomousCommands {
                         .withTimeout(1))
                 .andThen(elevator.setIdle(), wrist.setIdle());
     }
+    public static Command scoreL3(
+        DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
+        return navigateToNearestScoringPose(drive)
+                .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT)
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION)))
+                .until(elevator.atTargetHeight.and(wrist.atTargetAngle))
+                .andThen(intake.eject()
+                        .alongWith(elevator.holdHeight(ElevatorConstants.LEVEL_3_TARGET_HEIGHT))
+                        .alongWith(wrist.holdAngle(WristConstants.LEVEL_MID_POSITION))
+                        .withTimeout(1))
+                .andThen(elevator.setIdle(), wrist.setIdle());        
+        }
 }
