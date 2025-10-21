@@ -22,10 +22,10 @@ public final class ReefNavigation {
      * translation of the scoring pose
      */
     public static final Translation2d RIGHT_SCORING_VECTOR =
-            new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(1));
+            new Translation2d(Units.inchesToMeters(11), Units.inchesToMeters(1.5)); // 20 out 1 over
 
     public static final Translation2d LEFT_SCORING_VECTOR =
-            new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(-12));
+            new Translation2d(Units.inchesToMeters(11), Units.inchesToMeters(-11.5)); // 20 out -12 over
 
     /**
      * the poses the robot needs to be at in order to score on the reef
@@ -60,6 +60,36 @@ public final class ReefNavigation {
         getRightBranchScoringPose(11),
     };
 
+    public static final Pose2d[] LEFT_SCORING_POSES = new Pose2d[] {
+        getLeftBranchScoringPose(6),
+        getLeftBranchScoringPose(7),
+        getLeftBranchScoringPose(8),
+        getLeftBranchScoringPose(9),
+        getLeftBranchScoringPose(10),
+        getLeftBranchScoringPose(11),
+        getLeftBranchScoringPose(17),
+        getLeftBranchScoringPose(18),
+        getLeftBranchScoringPose(19),
+        getLeftBranchScoringPose(20),
+        getLeftBranchScoringPose(21),
+        getLeftBranchScoringPose(22),
+    };
+
+    public static final Pose2d[] RIGHT_SCORING_POSES = new Pose2d[] {
+        getRightBranchScoringPose(6),
+        getRightBranchScoringPose(7),
+        getRightBranchScoringPose(8),
+        getRightBranchScoringPose(9),
+        getRightBranchScoringPose(10),
+        getRightBranchScoringPose(11),
+        getRightBranchScoringPose(17),
+        getRightBranchScoringPose(18),
+        getRightBranchScoringPose(19),
+        getRightBranchScoringPose(20),
+        getRightBranchScoringPose(21),
+        getRightBranchScoringPose(22),
+    };
+
     /** puts a Field2d object onto the SmartDashboard that contains the REEF_SCORING_POSES */
     public static void displayScoringPoses() {
         Field2d field = new Field2d();
@@ -78,7 +108,8 @@ public final class ReefNavigation {
     public static Pose2d getRightBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Pose2d rightBranchTarget = tagPose.transformBy(new Transform2d(RIGHT_SCORING_VECTOR, new Rotation2d(Math.PI)));
+        Pose2d rightBranchTarget =
+                tagPose.transformBy(new Transform2d(RIGHT_SCORING_VECTOR, new Rotation2d(/*Math.PI*/ )));
 
         return rightBranchTarget;
     }
@@ -86,7 +117,8 @@ public final class ReefNavigation {
     public static Pose2d getLeftBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Pose2d leftBranchTarget = tagPose.transformBy(new Transform2d(LEFT_SCORING_VECTOR, new Rotation2d(Math.PI)));
+        Pose2d leftBranchTarget =
+                tagPose.transformBy(new Transform2d(LEFT_SCORING_VECTOR, new Rotation2d(/*Math.PI*/ )));
 
         return leftBranchTarget;
     }
@@ -107,5 +139,13 @@ public final class ReefNavigation {
     /** the second half of the REEF_SCORING_POSES are the red poses */
     public static Pose2d getClosestRedScoringPose(Pose2d robotPose) {
         return robotPose.nearest(Arrays.asList(Arrays.copyOfRange(REEF_SCORING_POSES, 12, 23)));
+    }
+
+    public static Pose2d getNearestLeft(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(ReefNavigation.LEFT_SCORING_POSES));
+    }
+
+    public static Pose2d getNearestRight(Pose2d robotPose) {
+        return robotPose.nearest(Arrays.asList(ReefNavigation.RIGHT_SCORING_POSES));
     }
 }

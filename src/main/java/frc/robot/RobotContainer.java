@@ -27,7 +27,6 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem.PhotonVisionConstants;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -93,12 +92,12 @@ public class RobotContainer {
         var alliance = DriverStation.getAlliance();
         boolean onBlueSide = true; // default to blue mode
         if (alliance.isPresent()) {
-            onBlueSide = alliance.get() == Alliance.Blue;
+            onBlueSide = alliance.get() != Alliance.Blue;
         }
 
-        Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
-        Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
-        Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
+        // Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
+        // Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
+        // Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
 
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
@@ -164,16 +163,30 @@ public class RobotContainer {
 
         operatorController
                 .button(2)
-                .onTrue(elevatorSubsystem.setL1().alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL1()
+                        .alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
         operatorController
                 .button(12)
-                .onTrue(elevatorSubsystem.setL2().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL2()
+                        .alongWith(
+                                wristSubsystem.setL2and3(),
+                                coralSubsystem.setEjecting(),
+                                algaeSubsystem.setEjecting()));
         operatorController
                 .button(5)
-                .onTrue(elevatorSubsystem.setL3().alongWith(wristSubsystem.setL2and3(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL3()
+                        .alongWith(
+                                wristSubsystem.setL2and3(),
+                                coralSubsystem.setEjecting(),
+                                algaeSubsystem.setEjecting()));
         operatorController
                 .button(6)
-                .onTrue(elevatorSubsystem.setL4().alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                .onTrue(elevatorSubsystem
+                        .setL4()
+                        .alongWith(wristSubsystem.setL4(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
 
         operatorController.button(4).whileTrue(elevatorSubsystem.nudgeUp());
         operatorController.button(8).whileTrue(elevatorSubsystem.nudgeDown());
@@ -181,8 +194,7 @@ public class RobotContainer {
                 .button(11)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_LOW_TARGET_HEIGHT)
-                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION))
-                        );
+                        .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
 
         operatorController
                 .button(7)
@@ -206,6 +218,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoChooser.get();
+        return null; // autoChooser.get();
     }
 }
