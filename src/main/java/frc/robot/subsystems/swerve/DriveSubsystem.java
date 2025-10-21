@@ -164,6 +164,8 @@ public class DriveSubsystem extends SubsystemBase {
         Logger.recordOutput("position x error", xController.getError());
         Logger.recordOutput("position y error", yController.getError());
         Logger.recordOutput("rotation error", headingController.getError());
+
+        Logger.recordOutput("average drive motor current draw", getAverageDriveMotorCurrentDraw());
     }
 
     /** puts information about about the swerve drive onto the dashboard */
@@ -491,6 +493,29 @@ public class DriveSubsystem extends SubsystemBase {
             backLeft.getLastDesiredState(),
             backRight.getLastDesiredState()
         };
+    }
+
+    /** useful for tuning the drivetrain current limiters to prevent brownouts */
+    private double[] getModuleDriveCurrents() {
+        return new double[] {
+            frontLeft.getDriveMotorOutputCurrent(),
+            frontRight.getDriveMotorOutputCurrent(),
+            backLeft.getDriveMotorOutputCurrent(),
+            backRight.getDriveMotorOutputCurrent(),
+        };
+    }
+
+    private double getTotalDriveMotorCurrentDraw(){
+        double totalCurrent = 0.0;
+        for (double outputCurrent : getModuleDriveCurrents()){
+            totalCurrent += outputCurrent;
+        }
+
+        return totalCurrent;
+    }
+
+    private double getAverageDriveMotorCurrentDraw(){
+        return getTotalDriveMotorCurrentDraw() / 4;
     }
 
     /**

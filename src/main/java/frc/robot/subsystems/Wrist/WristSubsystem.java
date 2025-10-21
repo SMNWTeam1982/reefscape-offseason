@@ -64,8 +64,8 @@ public class WristSubsystem extends SubsystemBase {
 
         public static final double WRIST_PID_TOLERANCE = 0.01;
 
-        public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 2;
-        public static final double WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI / 4;
+        public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 4; // pi/2
+        public static final double WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI; //pi/4
 
         public static final SparkBaseConfig PIVOT_MOTOR_CONFIG =
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
@@ -106,6 +106,10 @@ public class WristSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Logger.recordOutput("wrist temperature", pivotMotor.getMotorTemperature());
+        
+        Logger.recordOutput("wrist temperature status", pivotMotor.getMotorTemperature() > 40);
+
         Logger.recordOutput("wrist pos radians", getWristPosition().getRadians());
         Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);
         Logger.recordOutput("wrist error radians", wristController.getPositionError());
@@ -128,7 +132,10 @@ public class WristSubsystem extends SubsystemBase {
                     // a safety mechanism in case the wrist breaks and the encoder goes out of bounds
                     if (wristPositionRadians > Math.PI || wristPositionRadians < -Math.PI) {
                         pivotMotor.set(0);
+                        Logger.recordOutput("Wrist Encoder status",false);
                         return;
+                    }else{
+                        Logger.recordOutput("Wrist Encoder status",true);
                     }
 
                     // pid loop tuned to output in volts

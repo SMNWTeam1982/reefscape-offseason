@@ -176,6 +176,14 @@ public class SwerveModule {
                 Rotation2d.fromRotations(turnEncoder.getPosition().getValueAsDouble()));
     }
 
+    /** 
+     * @return the output current of the drive motor in amps,
+     * <p> this is data from the motor controller NOT the PDP
+     */
+    public double getDriveMotorOutputCurrent() {
+        return driveMotor.getOutputCurrent();
+    }
+
     /**
      * @return the angle of the wheel and the distance traveled by the wheel
      */

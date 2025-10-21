@@ -6,6 +6,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,6 +25,8 @@ public abstract class VisionSubsystem extends SubsystemBase {
     private VisionData lastVisionData;
     private boolean isDataFresh = false;
 
+    public final Trigger freshData = new Trigger(() -> isDataFresh);
+
     @Override
     public void periodic() {
         var visionResult = getVisionResult();
@@ -34,6 +37,8 @@ public abstract class VisionSubsystem extends SubsystemBase {
         } else {
             isDataFresh = false;
         }
+
+        Logger.recordOutput(getName() + " has fresh data", isDataFresh);
     }
 
     /** the data from vision combined in a convinient package */
@@ -94,9 +99,9 @@ public abstract class VisionSubsystem extends SubsystemBase {
 
     /** this logs the x, y, and heading of the vision individualy and as a Pose2d */
     private void logPoseEstimation(Pose2d estimatedPose) {
-        Logger.recordOutput(getName() + "X Position", estimatedPose.getX());
-        Logger.recordOutput(getName() + "Y Position", estimatedPose.getY());
-        Logger.recordOutput(getName() + "Rotation", estimatedPose.getRotation().getRadians());
-        Logger.recordOutput(getName() + "Estimated Pose", estimatedPose);
+        Logger.recordOutput(getName() + " X Position", estimatedPose.getX());
+        Logger.recordOutput(getName() + " Y Position", estimatedPose.getY());
+        Logger.recordOutput(getName() + " Rotation", estimatedPose.getRotation().getRadians());
+        Logger.recordOutput(getName() + " Estimated Pose", estimatedPose);
     }
 }
