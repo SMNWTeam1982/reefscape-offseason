@@ -23,7 +23,7 @@ public final class AutonomousCommands {
      * this command requires the drive subsystem and the elevator subsystem, meaning their default
      * commands will be cancelled
      */
-    public static Command scorelatestL1(
+    public static Command scoreNearestL1(
             DriveSubsystem drive, ElevatorSubsystem elevator, WristSubsystem wrist, CoralSubsystem intake) {
         return navigateToNearestScoringPose(drive)
                 .andThen(elevator.holdHeight(ElevatorConstants.LEVEL_1_TARGET_HEIGHT)
