@@ -160,7 +160,7 @@ public class RobotContainer {
         operatorController.button(10).whileTrue(coralSubsystem.intakeEject().alongWith(algaeSubsystem.intakeEject()));
 
         operatorController
-                .button(1) //  Turns wrist to station pos and intakes coral 
+                .button(1) //  Turns wrist to station pos and intakes coral
                 .onTrue(elevatorSubsystem
                         .setStation()
                         .alongWith(wristSubsystem.setStation(), coralSubsystem.setIntaking()));
@@ -187,7 +187,7 @@ public class RobotContainer {
                                 coralSubsystem.setEjecting(),
                                 algaeSubsystem.setEjecting()));
         operatorController
-                .button(6) // Moves to L4 Pos 
+                .button(6) // Moves to L4 Pos
                 .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setL4()
@@ -205,7 +205,7 @@ public class RobotContainer {
                         .alongWith(wristSubsystem.setTargetAngle(WristConstants.STOW_POSITION)));
 
         operatorController
-                .button(7) // Moves to Low Algea Pos 
+                .button(7) // Moves to Low Algea Pos
                 .debounce(0.05)
                 .onTrue(elevatorSubsystem
                         .setTargetHeight(ElevatorConstants.ALGAE_HIGH_TARGET_HEIGHT)
