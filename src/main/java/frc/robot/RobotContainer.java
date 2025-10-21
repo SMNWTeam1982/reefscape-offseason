@@ -27,7 +27,6 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.swerve.DriveSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem.PhotonVisionConstants;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -96,9 +95,9 @@ public class RobotContainer {
             onBlueSide = alliance.get() != Alliance.Blue;
         }
 
-        //Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
-        //Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
-        //Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
+        // Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
+        // Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
+        // Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
 
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
@@ -219,6 +218,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return null;//autoChooser.get();
+        return null; // autoChooser.get();
     }
 }

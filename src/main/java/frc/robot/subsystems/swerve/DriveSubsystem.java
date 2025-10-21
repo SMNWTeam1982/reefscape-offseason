@@ -16,7 +16,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -129,14 +128,12 @@ public class DriveSubsystem extends SubsystemBase {
     private final PIDController xController = new PIDController(
             DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
-            DriveConstants.TRANSLATION_PID_CONSTANTS.kD
-            );//DriveConstants.TRANSLATION_PID_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kD); // DriveConstants.TRANSLATION_PID_CONSTRAINTS);
 
     private final PIDController yController = new PIDController(
             DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
-            DriveConstants.TRANSLATION_PID_CONSTANTS.kD
-            );//DriveConstants.TRANSLATION_PID_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kD); // DriveConstants.TRANSLATION_PID_CONSTRAINTS);
 
     public DriveSubsystem(Supplier<VisionData> visionDataGetter, BooleanSupplier visionFreshnessGetter) {
         this.visionDataGetter = visionDataGetter;
