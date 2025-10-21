@@ -57,7 +57,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static final double NUDGE_SPEED = .25;
 
-        public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
+        public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(3.0, 0.0, 0.0);
 
         public static final Constraints TRANSLATION_PID_CONSTRAINTS = new Constraints(1.0, 1.0);
 
@@ -65,7 +65,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static final double AUTO_TRANSLATION_TOLERANCE = 0.01; // 1cm
 
-        public static final PIDConstants ROTATION_PID_CONSTANTS = new PIDConstants(1.0, 0.0, 0.0);
+        public static final PIDConstants ROTATION_PID_CONSTANTS = new PIDConstants(3.0, 0.0, 0.0);
 
         public static final Rotation2d AUTO_ROTATION_TOLERANCE = Rotation2d.fromDegrees(1);
 
@@ -126,23 +126,24 @@ public class DriveSubsystem extends SubsystemBase {
             DriveConstants.ROTATION_PID_CONSTANTS.kI,
             DriveConstants.ROTATION_PID_CONSTANTS.kD);
 
-    private final ProfiledPIDController xController = new ProfiledPIDController(
+    private final PIDController xController = new PIDController(
             DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
-            DriveConstants.TRANSLATION_PID_CONSTANTS.kD,
-            DriveConstants.TRANSLATION_PID_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kD
+            );//DriveConstants.TRANSLATION_PID_CONSTRAINTS);
 
-    private final ProfiledPIDController yController = new ProfiledPIDController(
+    private final PIDController yController = new PIDController(
             DriveConstants.TRANSLATION_PID_CONSTANTS.kP,
             DriveConstants.TRANSLATION_PID_CONSTANTS.kI,
-            DriveConstants.TRANSLATION_PID_CONSTANTS.kD,
-            DriveConstants.TRANSLATION_PID_CONSTRAINTS);
+            DriveConstants.TRANSLATION_PID_CONSTANTS.kD
+            );//DriveConstants.TRANSLATION_PID_CONSTRAINTS);
 
     public DriveSubsystem(Supplier<VisionData> visionDataGetter, BooleanSupplier visionFreshnessGetter) {
         this.visionDataGetter = visionDataGetter;
         this.visionFreshnessGetter = visionFreshnessGetter;
 
         headingController.setTolerance(DriveConstants.AUTO_ROTATION_TOLERANCE.getRadians());
+        headingController.enableContinuousInput(-Math.PI, Math.PI);
         xController.setTolerance(DriveConstants.AUTO_TRANSLATION_TOLERANCE);
         yController.setTolerance(DriveConstants.AUTO_TRANSLATION_TOLERANCE);
 
@@ -387,12 +388,12 @@ public class DriveSubsystem extends SubsystemBase {
         return runOnce(() -> autoField.getObject("Target").setPose(targetPose))
                 .andThen(driveTopDown(
                                 () -> {
-                                    double xOutput = xController.calculate(
+                                    double xOutput = -xController.calculate(
                                             getEstimatedPose().getX(), targetPose.getX());
                                     double clampedXOutput = MathUtil.clamp(
                                             xOutput, -DriveConstants.AUTO_MAX_SPEED, DriveConstants.AUTO_MAX_SPEED);
 
-                                    double yOutput = yController.calculate(
+                                    double yOutput = -yController.calculate(
                                             getEstimatedPose().getY(), targetPose.getY());
                                     double clampedYOutput = MathUtil.clamp(
                                             yOutput, -DriveConstants.AUTO_MAX_SPEED, DriveConstants.AUTO_MAX_SPEED);
@@ -400,10 +401,10 @@ public class DriveSubsystem extends SubsystemBase {
                                     return new ChassisSpeeds(clampedXOutput, clampedYOutput, 0);
                                 },
                                 () -> targetPose.getRotation())
-                        .until(() -> xController.atGoal() && yController.atGoal()))
+                        .until(() -> xController.atSetpoint() && yController.atSetpoint()))
                 .finallyDo(() -> {
-                    xController.reset(getEstimatedPose().getX());
-                    yController.reset(getEstimatedPose().getY());
+                    xController.reset();
+                    yController.reset();
                 });
     }
     /**

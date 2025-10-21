@@ -93,12 +93,12 @@ public class RobotContainer {
         var alliance = DriverStation.getAlliance();
         boolean onBlueSide = true; // default to blue mode
         if (alliance.isPresent()) {
-            onBlueSide = alliance.get() == Alliance.Blue;
+            onBlueSide = alliance.get() != Alliance.Blue;
         }
 
-        Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
-        Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
-        Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
+        //Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
+        //Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
+        //Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
 
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
@@ -203,6 +203,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoChooser.get();
+        return null;//autoChooser.get();
     }
 }

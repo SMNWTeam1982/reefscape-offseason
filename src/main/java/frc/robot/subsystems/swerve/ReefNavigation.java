@@ -22,10 +22,10 @@ public final class ReefNavigation {
      * translation of the scoring pose
      */
     public static final Translation2d RIGHT_SCORING_VECTOR =
-            new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(1));
+            new Translation2d(Units.inchesToMeters(11), Units.inchesToMeters(1.5));// 20 out 1 over
 
     public static final Translation2d LEFT_SCORING_VECTOR =
-            new Translation2d(Units.inchesToMeters(20), Units.inchesToMeters(-12));
+            new Translation2d(Units.inchesToMeters(11), Units.inchesToMeters(-11.5)); // 20 out -12 over
 
     /**
      * the poses the robot needs to be at in order to score on the reef
@@ -78,7 +78,7 @@ public final class ReefNavigation {
     public static Pose2d getRightBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Pose2d rightBranchTarget = tagPose.transformBy(new Transform2d(RIGHT_SCORING_VECTOR, new Rotation2d(Math.PI)));
+        Pose2d rightBranchTarget = tagPose.transformBy(new Transform2d(RIGHT_SCORING_VECTOR, new Rotation2d(/*Math.PI*/)));
 
         return rightBranchTarget;
     }
@@ -86,7 +86,7 @@ public final class ReefNavigation {
     public static Pose2d getLeftBranchScoringPose(int tagIDOfFace) {
         Pose2d tagPose = getTagPose(tagIDOfFace);
 
-        Pose2d leftBranchTarget = tagPose.transformBy(new Transform2d(LEFT_SCORING_VECTOR, new Rotation2d(Math.PI)));
+        Pose2d leftBranchTarget = tagPose.transformBy(new Transform2d(LEFT_SCORING_VECTOR, new Rotation2d(/*Math.PI*/)));
 
         return leftBranchTarget;
     }
