@@ -189,7 +189,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Logger.recordOutput("elevator at target", atTargetHeight.getAsBoolean());
+        Logger.recordOutput("elevator at target", altitudePidController.atSetpoint());
 
         Logger.recordOutput("elevator pos", getElevatorHeight());
         Logger.recordOutput("elevator target", altitudePidController.getSetpoint());

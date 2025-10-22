@@ -165,6 +165,7 @@ public class DriveSubsystem extends SubsystemBase {
         Logger.recordOutput("position y error", yController.getError());
         Logger.recordOutput("rotation error", headingController.getError());
 
+        Logger.recordOutput("total drivetrain drive motor current draw", getTotalDriveMotorCurrentDraw());
         Logger.recordOutput("average drive motor current draw", getAverageDriveMotorCurrentDraw());
     }
 

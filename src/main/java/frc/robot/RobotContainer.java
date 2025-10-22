@@ -86,7 +86,7 @@ public class RobotContainer {
         var alliance = DriverStation.getAlliance();
         boolean onBlueSide = true; // default to blue mode
         if (alliance.isPresent()) {
-            onBlueSide = alliance.get() != Alliance.Blue;
+            onBlueSide = alliance.get() != Alliance.Blue; // had to reverse this due to a bug
         }
 
         // Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());

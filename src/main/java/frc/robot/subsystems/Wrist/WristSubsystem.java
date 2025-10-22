@@ -62,7 +62,7 @@ public class WristSubsystem extends SubsystemBase {
         public static final double WRIST_INTEGRAL_GAIN = 0; // 0.1;
         public static final double WRIST_DERIVATIVE_GAIN = 0; // 0.2;
 
-        public static final double WRIST_PID_TOLERANCE = 0.01;
+        public static final double WRIST_PID_TOLERANCE = 0.05;
 
         public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 4; // pi/2
         public static final double WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI; // pi/4
@@ -108,8 +108,8 @@ public class WristSubsystem extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput("wrist temperature", pivotMotor.getMotorTemperature());
 
-        Logger.recordOutput("wrist temperature status", pivotMotor.getMotorTemperature() > 40);
-        Logger.recordOutput("wrist at target", atTargetAngle.getAsBoolean());
+        Logger.recordOutput("wrist temperature status", pivotMotor.getMotorTemperature() < 40);
+        Logger.recordOutput("wrist at target", wristController.atGoal());
 
         Logger.recordOutput("wrist pos radians", getWristPosition().getRadians());
         Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);

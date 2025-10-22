@@ -99,6 +99,7 @@ public final class AutonomousCommands {
                 .andThen(elevator.setIdle(), wrist.setIdle()); // returns to idle position
     }
 
+    /** moves towards from drivers station */
     public static Command stationtocoral(DriveSubsystem drive) {
         return navigateToNearestScoringPose(drive);
     }
