@@ -1,5 +1,6 @@
 package frc.robot.Autos;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem.ElevatorConstants;
@@ -37,6 +38,31 @@ public final class AutonomousCommands {
     public static Command navigateToNearestLeftBranchScoringPose(DriveSubsystem drive) {
         return drive.defer(
                 () -> drive.moveToPose(ReefNavigation.getNearestLeftBranchScoringPose(drive.getEstimatedPose())));
+    }
+
+    /** creates a command for scoring at a specific place,
+     * <p> I created this function because the wrist.atTargetAngle trigger was not returning true
+     * <p> This function also is more versatile because it can create commands for any reef location
+     */
+    public static Command scoreAtPlace(
+        DriveSubsystem drive,
+        ElevatorSubsystem elevator,
+        WristSubsystem wrist,
+        CoralSubsystem intake,
+        int tagIDToScoreAt,
+        boolean rightBranch,
+        double elevatorHeight,
+        Rotation2d wristAngle
+    ) {
+        return drive.moveToPose(
+            rightBranch ? ReefNavigation.getRightBranchScoringPose(tagIDToScoreAt) : ReefNavigation.getLeftBranchScoringPose(tagIDToScoreAt)
+        ).andThen(
+            elevator.holdHeight(elevatorHeight).alongWith(wrist.holdAngle(wristAngle)).until(elevator.atTargetHeight)
+        ).andThen(
+            elevator.holdHeight(elevatorHeight).alongWith(wrist.holdAngle(wristAngle)).withTimeout(1.0)
+        ).andThen(
+            intake.eject().alongWith(elevator.holdHeight(elevatorHeight),wrist.holdAngle(wristAngle)).withTimeout(1.0)
+        ).andThen(elevator.setIdle(), wrist.setIdle());
     }
 
     /**
