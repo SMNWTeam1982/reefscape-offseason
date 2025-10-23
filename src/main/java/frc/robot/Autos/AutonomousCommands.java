@@ -45,24 +45,28 @@ public final class AutonomousCommands {
      * <p> This function also is more versatile because it can create commands for any reef location
      */
     public static Command scoreAtPlace(
-        DriveSubsystem drive,
-        ElevatorSubsystem elevator,
-        WristSubsystem wrist,
-        CoralSubsystem intake,
-        int tagIDToScoreAt,
-        boolean rightBranch,
-        double elevatorHeight,
-        Rotation2d wristAngle
-    ) {
+            DriveSubsystem drive,
+            ElevatorSubsystem elevator,
+            WristSubsystem wrist,
+            CoralSubsystem intake,
+            int tagIDToScoreAt,
+            boolean rightBranch,
+            double elevatorHeight,
+            Rotation2d wristAngle) {
         return drive.moveToPose(
-            rightBranch ? ReefNavigation.getRightBranchScoringPose(tagIDToScoreAt) : ReefNavigation.getLeftBranchScoringPose(tagIDToScoreAt)
-        ).andThen(
-            elevator.holdHeight(elevatorHeight).alongWith(wrist.holdAngle(wristAngle)).until(elevator.atTargetHeight)
-        ).andThen(
-            elevator.holdHeight(elevatorHeight).alongWith(wrist.holdAngle(wristAngle)).withTimeout(1.0)
-        ).andThen(
-            intake.eject().alongWith(elevator.holdHeight(elevatorHeight),wrist.holdAngle(wristAngle)).withTimeout(1.0)
-        ).andThen(elevator.setIdle(), wrist.setIdle());
+                        rightBranch
+                                ? ReefNavigation.getRightBranchScoringPose(tagIDToScoreAt)
+                                : ReefNavigation.getLeftBranchScoringPose(tagIDToScoreAt))
+                .andThen(elevator.holdHeight(elevatorHeight)
+                        .alongWith(wrist.holdAngle(wristAngle))
+                        .until(elevator.atTargetHeight))
+                .andThen(elevator.holdHeight(elevatorHeight)
+                        .alongWith(wrist.holdAngle(wristAngle))
+                        .withTimeout(1.0))
+                .andThen(intake.eject()
+                        .alongWith(elevator.holdHeight(elevatorHeight), wrist.holdAngle(wristAngle))
+                        .withTimeout(1.0))
+                .andThen(elevator.setIdle(), wrist.setIdle());
     }
 
     /**
