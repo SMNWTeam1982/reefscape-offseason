@@ -85,7 +85,8 @@ public final class AutonomousCommands {
                         rightBranch
                                 ? ReefNavigation.getNearestRightBranchScoringPose(drive.getEstimatedPose())
                                 : ReefNavigation.getNearestLeftBranchScoringPose(drive.getEstimatedPose()))
-                                .alongWith(wrist.holdAngle(WristConstants.STOW_POSITION)).withTimeout(5) // ensure that it doesn't do nothing for the whole auto
+                .alongWith(wrist.holdAngle(WristConstants.STOW_POSITION))
+                .withTimeout(5) // ensure that it doesn't do nothing for the whole auto
                 .andThen(elevator.holdHeight(elevatorHeight)
                         .alongWith(wrist.holdAngle(wristAngle))
                         .until(elevator.atTargetHeight))

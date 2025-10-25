@@ -5,8 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -111,7 +109,8 @@ public class RobotContainer {
         //                                         deadZone(driverController.getLeftY()) * 1.5,
         //                                         deadZone(driverController.getRightX())
         //                                                 * Math.PI
-        //                                                 * 0.5); // -PI - PI radians per second (-180 - 180 degrees/sec)
+        //                                                 * 0.5); // -PI - PI radians per second (-180 - 180
+        // degrees/sec)
         //                                 },
         //                                 side));
         //                 }
@@ -198,7 +197,10 @@ public class RobotContainer {
                 .button(2) // Moves to L1 Pos
                 .onTrue(elevatorSubsystem
                         .setL1()
-                        .alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setIntaking())); // reversed signes
+                        .alongWith(
+                                wristSubsystem.setL1(),
+                                coralSubsystem.setEjecting(),
+                                algaeSubsystem.setIntaking())); // reversed signes
         operatorController
                 .button(12) // Moves to L2 Pos
                 .onTrue(elevatorSubsystem
@@ -257,13 +259,16 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
 
-        return wristSubsystem.zeroWrist().andThen(elevatorSubsystem.zeroEncoders()).andThen(AutonomousCommands.scoreAtNearestPlace(
-                driveSubsystem,
-                elevatorSubsystem,
-                wristSubsystem,
-                coralSubsystem,
-                true,
-                ElevatorConstants.LEVEL_3_TARGET_HEIGHT,
-                WristConstants.LEVEL_MID_POSITION));
+        return wristSubsystem
+                .zeroWrist()
+                .andThen(elevatorSubsystem.zeroEncoders())
+                .andThen(AutonomousCommands.scoreAtNearestPlace(
+                        driveSubsystem,
+                        elevatorSubsystem,
+                        wristSubsystem,
+                        coralSubsystem,
+                        true,
+                        ElevatorConstants.LEVEL_3_TARGET_HEIGHT,
+                        WristConstants.LEVEL_MID_POSITION));
     }
 }

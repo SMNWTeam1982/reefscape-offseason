@@ -117,12 +117,10 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("wrist current output", pivotMotor.getOutputCurrent());
     }
 
-    public Command zeroWrist(){
-        return runOnce(
-            () -> {
-                pivotMotorEncoder.setPosition(0);
-            }
-        );
+    public Command zeroWrist() {
+        return runOnce(() -> {
+            pivotMotorEncoder.setPosition(0);
+        });
     }
 
     /** the direction of rotation is changed in the encoder config */
