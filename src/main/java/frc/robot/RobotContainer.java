@@ -83,26 +83,55 @@ public class RobotContainer {
      * <p>see the wpilib page on coordinates and joystick coordinates
      */
     private void configureDriverBindings() {
-        var alliance = DriverStation.getAlliance();
-        boolean onBlueSide = true; // default to blue mode
-        if (alliance.isPresent()) {
-            onBlueSide = alliance.get() != Alliance.Blue; // had to reverse this due to a bug
-        }
+        // var alliance = DriverStation.getAlliance();
+        // boolean onBlueSide = true; // default to blue mode
+        // if (alliance.isPresent()) {
+        //     onBlueSide = alliance.get() != Alliance.Blue; // had to reverse this due to a bug
+        // }
 
         // Logger.recordOutput("drive controller left x", () -> driverController.getLeftX());
         // Logger.recordOutput("drive controller left y", () -> driverController.getLeftY());
         // Logger.recordOutput("drive controller right x", () -> driverController.getRightX());
 
+        // driverController.rightStick().debounce(0.5).onTrue(
+        //         driveSubsystem.runOnce(
+        //                 () -> {
+        //                         var latestAlliance = DriverStation.getAlliance();
+
+        //                         boolean side = true;
+
+        //                         if (latestAlliance.isPresent()) {
+        //                                 side = latestAlliance.get() != Alliance.Blue;
+        //                         }
+
+        //                         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
+        //                                 () -> {
+        //                                 return new ChassisSpeeds(
+        //                                         deadZone(driverController.getLeftX()) * 1.5,
+        //                                         deadZone(driverController.getLeftY()) * 1.5,
+        //                                         deadZone(driverController.getRightX())
+        //                                                 * Math.PI
+        //                                                 * 0.5); // -PI - PI radians per second (-180 - 180 degrees/sec)
+        //                                 },
+        //                                 side));
+        //                 }
+        //         )
+        // );
+
+        boolean side = true; // false for blue, true for red
+
+        double speedMultiplier = 2.5;
+
         driveSubsystem.setDefaultCommand(driveSubsystem.driveFromDriversStation(
                 () -> {
                     return new ChassisSpeeds(
-                            deadZone(driverController.getLeftX()) * 2 * 0.5,
-                            deadZone(driverController.getLeftY()) * 2 * 0.5,
+                            deadZone(driverController.getLeftX()) * speedMultiplier,
+                            deadZone(driverController.getLeftY()) * speedMultiplier,
                             deadZone(driverController.getRightX())
                                     * Math.PI
-                                    * 0.5); // -PI - PI radians per second (-180 - 180 degrees/sec)
+                                    * 0.75); // -PI - PI radians per second (-180 - 180 degrees/sec)
                 },
-                onBlueSide));
+                side));
 
         driverController.rightBumper().whileTrue(climberSubsystem.moveClimberIn());
         driverController.leftBumper().whileTrue(climberSubsystem.moveClimberOut());
@@ -111,17 +140,17 @@ public class RobotContainer {
                 .x()
                 .debounce(0.1)
                 .whileTrue(driveSubsystem.driveAndOrientTowardsReefSide(
-                        () -> deadZone(driverController.getLeftX()) * 2 * 0.5,
-                        () -> deadZone(driverController.getLeftY()) * 2 * 0.5,
-                        onBlueSide)); // snaps rotation to the nearest reef side while retaining the ability to move
+                        () -> deadZone(driverController.getLeftX()) * speedMultiplier,
+                        () -> deadZone(driverController.getLeftY()) * speedMultiplier,
+                        side)); // snaps rotation to the nearest reef side while retaining the ability to move
 
         driverController
                 .y()
                 .debounce(0.1)
                 .whileTrue(driveSubsystem.driveAndOrientTowardsStationSide(
-                        () -> deadZone(driverController.getLeftX()) * 2 * 0.5,
-                        () -> deadZone(driverController.getLeftY()) * 2 * 0.5,
-                        onBlueSide)); // snaps the rotation to the nearest station while retaining the ability to move
+                        () -> deadZone(driverController.getLeftX()) * speedMultiplier,
+                        () -> deadZone(driverController.getLeftY()) * speedMultiplier,
+                        side)); // snaps the rotation to the nearest station while retaining the ability to move
 
         driverController
                 .a() // automatically moves to the closest LEFT reef scoring pose
@@ -169,7 +198,7 @@ public class RobotContainer {
                 .button(2) // Moves to L1 Pos
                 .onTrue(elevatorSubsystem
                         .setL1()
-                        .alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setEjecting()));
+                        .alongWith(wristSubsystem.setL1(), coralSubsystem.setEjecting(), algaeSubsystem.setIntaking())); // reversed signes
         operatorController
                 .button(12) // Moves to L2 Pos
                 .onTrue(elevatorSubsystem
@@ -227,6 +256,14 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoChooser.get();
+
+        return wristSubsystem.zeroWrist().andThen(elevatorSubsystem.zeroEncoders()).andThen(AutonomousCommands.scoreAtNearestPlace(
+                driveSubsystem,
+                elevatorSubsystem,
+                wristSubsystem,
+                coralSubsystem,
+                true,
+                ElevatorConstants.LEVEL_3_TARGET_HEIGHT,
+                WristConstants.LEVEL_MID_POSITION));
     }
 }

@@ -64,7 +64,7 @@ public class WristSubsystem extends SubsystemBase {
 
         public static final double WRIST_PID_TOLERANCE = 0.05;
 
-        public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 4; // pi/2
+        public static final double WRIST_MAX_VELOCITY_RADIANS_PER_SECOND = Math.PI / 2; // pi/2
         public static final double WRIST_MAX_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI; // pi/4
 
         public static final SparkBaseConfig PIVOT_MOTOR_CONFIG =
@@ -115,6 +115,14 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("wrist target radians", wristController.getSetpoint().position);
         Logger.recordOutput("wrist error radians", wristController.getPositionError());
         Logger.recordOutput("wrist current output", pivotMotor.getOutputCurrent());
+    }
+
+    public Command zeroWrist(){
+        return runOnce(
+            () -> {
+                pivotMotorEncoder.setPosition(0);
+            }
+        );
     }
 
     /** the direction of rotation is changed in the encoder config */

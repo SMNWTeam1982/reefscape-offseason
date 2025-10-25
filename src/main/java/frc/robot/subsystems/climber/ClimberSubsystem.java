@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static class ClimberConstants {
-        public static final double EXTEND_SPEED = 0.1;
-        public static final double RETRACT_SPEED = -0.1;
+        public static final double EXTEND_SPEED = 0.25;
+        public static final double RETRACT_SPEED = -0.25;
     }
 
     private final SparkMax climberMotor;

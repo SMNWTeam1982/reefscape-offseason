@@ -69,6 +69,35 @@ public final class AutonomousCommands {
                 .andThen(elevator.setIdle(), wrist.setIdle());
     }
 
+    /** creates a command for scoring at a specific place,
+     * <p> I created this function because the wrist.atTargetAngle trigger was not returning true
+     * <p> This function also is more versatile because it can create commands for any reef location
+     */
+    public static Command scoreAtNearestPlace(
+            DriveSubsystem drive,
+            ElevatorSubsystem elevator,
+            WristSubsystem wrist,
+            CoralSubsystem intake,
+            boolean rightBranch,
+            double elevatorHeight,
+            Rotation2d wristAngle) {
+        return drive.moveToPose(
+                        rightBranch
+                                ? ReefNavigation.getNearestRightBranchScoringPose(drive.getEstimatedPose())
+                                : ReefNavigation.getNearestLeftBranchScoringPose(drive.getEstimatedPose()))
+                                .alongWith(wrist.holdAngle(WristConstants.STOW_POSITION)).withTimeout(5) // ensure that it doesn't do nothing for the whole auto
+                .andThen(elevator.holdHeight(elevatorHeight)
+                        .alongWith(wrist.holdAngle(wristAngle))
+                        .until(elevator.atTargetHeight))
+                .andThen(elevator.holdHeight(elevatorHeight)
+                        .alongWith(wrist.holdAngle(wristAngle))
+                        .withTimeout(2.0))
+                .andThen(intake.eject()
+                        .alongWith(elevator.holdHeight(elevatorHeight), wrist.holdAngle(wristAngle))
+                        .withTimeout(1.0))
+                .andThen(elevator.setIdle(), wrist.setIdle());
+    }
+
     /**
      * this command requires the drive subsystem and the elevator subsystem, meaning their default
      * commands will be cancelled

@@ -49,20 +49,20 @@ public class DriveSubsystem extends SubsystemBase {
     public static final class DriveConstants {
         public static final double PHYSICAL_MAX_MPS = 3.8;
 
-        public static final double ARTIFICIAL_MAX_MPS = 2.5;
+        public static final double ARTIFICIAL_MAX_MPS = 3.0;
 
         public static final double DRIVE_PERIOD = TimedRobot.kDefaultPeriod;
         public static final boolean GYRO_REVERSED = false;
 
         public static final double NUDGE_SPEED = .25;
 
-        public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(3.0, 0.0, 0.0);
+        public static final PIDConstants TRANSLATION_PID_CONSTANTS = new PIDConstants(3.5, 0.0, 0.0);
 
         public static final Constraints TRANSLATION_PID_CONSTRAINTS = new Constraints(1.0, 1.0);
 
         public static final double AUTO_MAX_SPEED = 0.5; // mps
 
-        public static final double AUTO_TRANSLATION_TOLERANCE = 0.01; // 1cm
+        public static final double AUTO_TRANSLATION_TOLERANCE = 0.02; // 1cm
 
         public static final PIDConstants ROTATION_PID_CONSTANTS = new PIDConstants(3.0, 0.0, 0.0);
 

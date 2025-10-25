@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class AlgaeSubsystem extends SubsystemBase {
 
     public static class AlgaeConstants {
-        public static final double ALGAE_INTAKE_SPEED = 0.5;
-        public static final double ALGAE_EJECT_SPEED = -0.5;
+        public static final double ALGAE_INTAKE_SPEED = -0.5;
+        public static final double ALGAE_EJECT_SPEED = 0.5;
 
         public static final SparkBaseConfig ALGAE_MOTOR_CONFIG =
                 new SparkMaxConfig().smartCurrentLimit(35).idleMode(SparkBaseConfig.IdleMode.kCoast);
